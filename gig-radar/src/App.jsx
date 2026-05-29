@@ -1,8 +1,8 @@
 import './App.css'
-import Home from './Home.jsx'
+import Profile from './Profile.jsx'
 
 function App() {
-  return <Home />
+  return <Profile />
 }
 
 export default App
