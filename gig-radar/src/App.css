@@ -182,3 +182,103 @@
     border-right-color: var(--border);
   }
 }
+/* Базові налаштування для всього сайту (якщо ще немає) */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: #121212; /* Темний фон */
+  color: #e0e0e0; /* Світлий текст */
+}
+
+/* ==========================================================================
+   СТИЛІ ДЛЯ ХЕДЕРА (HEADER)
+   ========================================================================== */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: #1a1a1a; /* Трохи світліший за боді */
+  border-bottom: 2px solid #282828; /* Акуратна лінія знизу */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Логотип */
+.logo h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.logo h2 span {
+  color: #ff3838; /* Червоний рок-акцент */
+  font-size: 14px;
+  text-transform: uppercase;
+  vertical-align: super;
+  margin-left: 4px;
+}
+
+/* Меню навігації */
+.nav-menu {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-menu a {
+  color: #b3b3b3;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+/* Ховер на посилання */
+.nav-menu a:hover {
+  color: #ff3838;
+}
+
+/* Кнопка увійти */
+.auth-btn button {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #ff3838;
+  padding: 8px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-btn button:hover {
+  background-color: #ff3838;
+  box-shadow: 0 0 10px rgba(255, 56, 56, 0.4);
+}
+
+/* ==========================================================================
+   СТИЛІ ДЛЯ ФУТЕРА (FOOTER)
+   ========================================================================== */
+.main-footer {
+  background-color: #1a1a1a;
+  border-top: 2px solid #282828;
+  padding: 25px 20px;
+  text-align: center;
+  margin-top: 50px; /* Відступ від контенту */
+}
+
+.main-footer p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #888;
+}
+
+/* Другий рядок у футері */
+.footer-sub {
+  font-size: 13px !important;
+  color: #555 !important;
+  font-style: italic;
+}
