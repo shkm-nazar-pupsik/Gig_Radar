@@ -1,14 +1,42 @@
 import React, { useState } from 'react';
-import './App.css'; 
+import './App.css';
 import Header from './header';
 import List from './List';
 import Map from './Map';
 import Footer from './footer';
 
+const initialEvents = [
+  {
+    id: 'e1',
+    date: '2026-05-24',
+    time: '19:00',
+    bandName: 'Rock Wave',
+    place: 'Docker Pub',
+    price: 220,
+    status: 'Опубліковано',
+  },
+  {
+    id: 'e2',
+    date: '2026-05-25',
+    time: '20:00',
+    bandName: 'Дим над містом',
+    place: 'Асортиментна Кімната',
+    price: 180,
+    status: 'Опубліковано',
+  },
+  {
+    id: 'e3',
+    date: '2026-06-02',
+    time: '18:30',
+    bandName: 'Underground Live',
+    place: 'Urban Space 100',
+    price: 0,
+    status: 'Чергується',
+  },
+];
+
 export default function App() {
-  // Створюємо головний порожній масив для концертів, 
-  // який потім буде заповнюватися з профілів музикантів
-  const [events, setEvents] = useState([]);
+  const [events] = useState(initialEvents);
 
   return (
     <div className="app-container">
@@ -17,11 +45,8 @@ export default function App() {
 
       {/* Головний контент сайту */}
       <main className="main-content">
-        {/* Передаємо наш порожній масив у компонент списку як пропс */}
         <List events={events} />
-        
-        {/* Карта (потім сюди теж можна буде передати events) */}
-        <Map />
+        <Map events={events} />
       </main>
 
       {/* Футер сайту */}
