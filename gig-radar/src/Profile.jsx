@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Profile.css';
 
-export default function Profile() {
+export default function Profile({ currentUser, isAdmin }) {
   const [activeTab, setActiveTab] = useState('checkpoints');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -13,7 +13,35 @@ export default function Profile() {
 
   const [editForm, setEditForm] = useState(profileData);
 
-  const checkpoints = [
+  const displayUser = currentUser && !isAdmin ? currentUser : null;
+  const isBand = displayUser?.role === 'band';
+  const isSimpleUser = displayUser?.role === 'user';
+
+  const profileSource = displayUser
+    ? {
+        name: displayUser.name,
+        genres: displayUser.genres || displayUser.favoriteGenres || profileData.genres,
+        description: displayUser.description || profileData.description,
+        logo: displayUser.logo || profileData.logo,
+      }
+    : profileData;
+  const approvedStatus = displayUser?.approved ?? true;
+
+  useEffect(() => {
+    if (displayUser) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEditForm({
+        name: displayUser.name,
+        genres: displayUser.genres || displayUser.favoriteGenres || profileData.genres,
+        description: displayUser.description || profileData.description,
+        logo: displayUser.logo || profileData.logo,
+      });
+    } else {
+      setEditForm(profileData);
+    }
+  }, [displayUser, profileData]);
+
+  const [checkpoints, setCheckpoints] = useState([
     {
       id: 1,
       date: '24 травня',
@@ -50,9 +78,19 @@ export default function Profile() {
       time: '19:00',
       status: 'Запланьовано',
     },
-  ];
+  ]);
 
-  const mediaItems = [
+  const [showCreateCheckpoint, setShowCreateCheckpoint] = useState(false);
+  const [newCheckpoint, setNewCheckpoint] = useState({
+    title: '',
+    date: '',
+    day: '',
+    location: '',
+    time: '',
+    status: 'Запланьовано',
+  });
+
+  const [mediaItems, setMediaItems] = useState([
     'https://via.placeholder.com/200?text=Photo+1',
     'https://via.placeholder.com/200?text=Photo+2',
     'https://via.placeholder.com/200?text=Photo+3',
@@ -61,7 +99,9 @@ export default function Profile() {
     'https://via.placeholder.com/200?text=Photo+6',
     'https://via.placeholder.com/200?text=Photo+7',
     'https://via.placeholder.com/200?text=Photo+8',
-  ];
+  ]);
+  const [showAddMedia, setShowAddMedia] = useState(false);
+  const [newMediaUrl, setNewMediaUrl] = useState('');
 
   const activities = [
     {
@@ -84,6 +124,19 @@ export default function Profile() {
     },
   ];
 
+  const displayedActivities = displayUser?.recentEvents
+    ? displayUser.recentEvents.map((text, index) => ({
+        id: `profile-activity-${index}`,
+        type: 'profile',
+        text,
+        date: new Date().toLocaleDateString('uk-UA', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        }),
+      }))
+    : activities;
+
   const handleEditProfile = (e) => {
     e.preventDefault();
     setProfileData(editForm);
@@ -98,6 +151,53 @@ export default function Profile() {
     }));
   };
 
+  const handleNewCheckpointChange = (e) => {
+    const { name, value } = e.target;
+    setNewCheckpoint((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateCheckpointSubmit = (e) => {
+    e.preventDefault();
+    if (!newCheckpoint.title || !newCheckpoint.date || !newCheckpoint.day || !newCheckpoint.location || !newCheckpoint.time) {
+      return;
+    }
+
+    const nextId = checkpoints.length ? Math.max(...checkpoints.map((item) => item.id)) + 1 : 1;
+    setCheckpoints((prev) => [
+      {
+        id: nextId,
+        ...newCheckpoint,
+      },
+      ...prev,
+    ]);
+    setNewCheckpoint({
+      title: '',
+      date: '',
+      day: '',
+      location: '',
+      time: '',
+      status: 'Запланьовано',
+    });
+    setShowCreateCheckpoint(false);
+  };
+
+  const handleNewMediaUrlChange = (e) => {
+    setNewMediaUrl(e.target.value);
+  };
+
+  const handleAddMediaSubmit = (e) => {
+    e.preventDefault();
+    const trimmedUrl = newMediaUrl.trim();
+    if (!trimmedUrl) return;
+
+    setMediaItems((prev) => [trimmedUrl, ...prev]);
+    setNewMediaUrl('');
+    setShowAddMedia(false);
+  };
+
   return (
     <div className="profile-container">
       {/* Header Section */}
@@ -106,15 +206,18 @@ export default function Profile() {
           {/* Logo and Info */}
           <div className="header-main">
             <div className="profile-logo">
-              <img src={profileData.logo} alt="Logo" />
+              <img src={profileSource.logo} alt="Logo" />
             </div>
             <div className="profile-info">
               <div className="profile-title">
-                <h1>{profileData.name}</h1>
+                <h1>{profileSource.name}</h1>
                 <span className="verified-badge">✓</span>
               </div>
-              <p className="profile-genres">{profileData.genres}</p>
-              <p className="profile-description">{profileData.description}</p>
+              <div className={`profile-approval ${approvedStatus ? 'approved' : 'pending'}`}>
+                {approvedStatus ? 'Перевірено' : 'Очікує підтвердження'}
+              </div>
+              <p className="profile-genres">{profileSource.genres}</p>
+              <p className="profile-description">{profileSource.description}</p>
               <div className="profile-social">
                 <a href="#" className="social-icon">
                   <img src="/img/camera.png" alt="Instagram" title="Instagram" />
@@ -130,21 +233,110 @@ export default function Profile() {
           </div>
           
           {/* Buttons */}
-          <div className="header-buttons">
-            <button className="create-checkpoint-btn">
-              Створити чекпойнт
-              <span>+</span>
-            </button>
-            <button
-              className="edit-profile-trigger"
-              onClick={() => {
-                setEditForm(profileData);
-                setIsEditingProfile(true);
-              }}
-            >
-              Редагувати профіль
-            </button>
-          </div>
+          {isBand && (
+            <div className="header-buttons">
+              <button className="create-checkpoint-btn" onClick={() => setShowCreateCheckpoint(true)}>
+                Створити чекпойнт
+                <span>+</span>
+              </button>
+              <button
+                className="edit-profile-trigger"
+                onClick={() => {
+                  setEditForm(profileSource);
+                  setIsEditingProfile(true);
+                }}
+              >
+                Редагувати профіль
+              </button>
+            </div>
+          )}
+          {showCreateCheckpoint && isBand && (
+            <div className="create-checkpoint-form">
+              <h3>Новий чекпойнт</h3>
+              <form onSubmit={handleCreateCheckpointSubmit}>
+                <div className="form-group">
+                  <label htmlFor="checkpoint-title">Назва події</label>
+                  <input
+                    type="text"
+                    id="checkpoint-title"
+                    name="title"
+                    value={newCheckpoint.title}
+                    onChange={handleNewCheckpointChange}
+                    placeholder="Наприклад, Rock Wave"
+                  />
+                </div>
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label htmlFor="checkpoint-date">Дата</label>
+                    <input
+                      type="text"
+                      id="checkpoint-date"
+                      name="date"
+                      value={newCheckpoint.date}
+                      onChange={handleNewCheckpointChange}
+                      placeholder="24 травня"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="checkpoint-day">День тижня</label>
+                    <input
+                      type="text"
+                      id="checkpoint-day"
+                      name="day"
+                      value={newCheckpoint.day}
+                      onChange={handleNewCheckpointChange}
+                      placeholder="ПТ"
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="checkpoint-location">Локація</label>
+                  <input
+                    type="text"
+                    id="checkpoint-location"
+                    name="location"
+                    value={newCheckpoint.location}
+                    onChange={handleNewCheckpointChange}
+                    placeholder="Docker Pub"
+                  />
+                </div>
+                <div className="form-group-row">
+                  <div className="form-group">
+                    <label htmlFor="checkpoint-time">Час</label>
+                    <input
+                      type="text"
+                      id="checkpoint-time"
+                      name="time"
+                      value={newCheckpoint.time}
+                      onChange={handleNewCheckpointChange}
+                      placeholder="19:00"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="checkpoint-status">Статус</label>
+                    <input
+                      type="text"
+                      id="checkpoint-status"
+                      name="status"
+                      value={newCheckpoint.status}
+                      onChange={handleNewCheckpointChange}
+                      placeholder="Запланьовано"
+                    />
+                  </div>
+                </div>
+                <div className="form-buttons">
+                  <button type="submit" className="save-btn">Додати чекпойнт</button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowCreateCheckpoint(false)}
+                  >
+                    Скасувати
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
 
@@ -234,56 +426,91 @@ export default function Profile() {
         {/* Checkpoints Tab */}
         {activeTab === 'checkpoints' && (
           <div className="checkpoints-container">
-            <div className="section-header">
-              <h2>Мої чекпойнти</h2>
-              <a href="#" className="view-all">Переглянути все →</a>
-            </div>
-            <div className="checkpoints-grid">
-              {checkpoints.map((checkpoint) => (
-                <div key={checkpoint.id} className="checkpoint-card">
-                  <div className="checkpoint-date">
-                    <span className="date-number">{checkpoint.date.split(' ')[0]}</span>
-                    <span className="date-day">{checkpoint.day}</span>
-                  </div>
-                  <div className="checkpoint-content">
-                    <h3>{checkpoint.title}</h3>
-                    <div className="checkpoint-detail">
-                      <img src="/img/placeholder-filled-point.png" alt="location" className="detail-icon" />
-                      <span>{checkpoint.location}</span>
-                    </div>
-                    <div className="checkpoint-detail">
-                      <img src="/img/time-left.png" alt="time" className="detail-icon" />
-                      <span>{checkpoint.time}</span>
-                    </div>
-                  </div>
-                  <div className="checkpoint-status">{checkpoint.status}</div>
-                  <div className="checkpoint-menu">⋯</div>
+            {isSimpleUser ? (
+              <div className="profile-message">
+                Ця вкладка доступна тільки для гуртів. Перейдіть на вкладку «Остання активність».
+              </div>
+            ) : (
+              <>
+                <div className="section-header">
+                  <h2>Мої чекпойнти</h2>
+                  <a href="#" className="view-all">Переглянути все →</a>
                 </div>
-              ))}
-            </div>
+                <div className="checkpoints-grid">
+                  {checkpoints.map((checkpoint) => (
+                    <div key={checkpoint.id} className="checkpoint-card">
+                      <div className="checkpoint-date">
+                        <span className="date-number">{checkpoint.date.split(' ')[0]}</span>
+                        <span className="date-month">{checkpoint.date.split(' ')[1]}</span>
+                      </div>
+                      <div className="checkpoint-content">
+                        <h3>{checkpoint.title}</h3>
+                        <div className="checkpoint-weekday">{checkpoint.day}</div>
+                        <div className="checkpoint-detail">
+                          <img src="/img/placeholder-filled-point.png" alt="location" className="detail-icon" />
+                          <span>{checkpoint.location}</span>
+                        </div>
+                        <div className="checkpoint-detail">
+                          <img src="/img/time-left.png" alt="time" className="detail-icon" />
+                          <span>{checkpoint.time}</span>
+                        </div>
+                      </div>
+                      <div className="checkpoint-status">{checkpoint.status}</div>
+                      <div className="checkpoint-menu">⋯</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {/* Media Tab */}
         {activeTab === 'media' && (
           <div className="media-container">
-            <div className="section-header">
-              <h2>Медіа</h2>
-              <a href="#" className="view-all">Переглянути все →</a>
-            </div>
-            <div className="media-grid">
-              {mediaItems.map((item, index) => (
-                <div key={index} className="media-item">
-                  <img src={item} alt={`Media ${index + 1}`} />
+            {isSimpleUser ? (
+              <div className="profile-message">
+                Ця вкладка доступна тільки для гуртів. Перейдіть на вкладку «Остання активність».
+              </div>
+            ) : (
+              <>
+                <div className="section-header">
+                  <h2>Медіа</h2>
+                  <a href="#" className="view-all">Переглянути все →</a>
                 </div>
-              ))}
-            </div>
-            <div className="upload-button">
-              <button>
-                <img src="/img/camera.png" alt="camera" className="btn-icon" />
-                Додати фото
-              </button>
-            </div>
+                <div className="media-grid">
+                  {mediaItems.map((item, index) => (
+                    <div key={index} className="media-item">
+                      <img src={item} alt={`Media ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+                <div className="upload-button">
+                  {!showAddMedia ? (
+                    <button type="button" onClick={() => setShowAddMedia(true)}>
+                      <img src="/img/camera.png" alt="camera" className="btn-icon" />
+                      Додати фото
+                    </button>
+                  ) : (
+                    <form className="add-media-form" onSubmit={handleAddMediaSubmit}>
+                      <input
+                        type="text"
+                        className="add-media-input"
+                        value={newMediaUrl}
+                        onChange={handleNewMediaUrlChange}
+                        placeholder="Вставте URL картинки"
+                      />
+                      <div className="add-media-actions">
+                        <button type="submit" className="save-btn">Додати</button>
+                        <button type="button" className="cancel-btn" onClick={() => setShowAddMedia(false)}>
+                          Скасувати
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -292,7 +519,7 @@ export default function Profile() {
           <div className="activity-container">
             <h2>Остання активність</h2>
             <div className="activity-list">
-              {activities.map((activity) => (
+              {displayedActivities.map((activity) => (
                 <div key={activity.id} className="activity-item">
                   <div className="activity-icon">
                     {activity.type === 'checkpoint' && <img src="/img/calendar.png" alt="checkpoint" />}
