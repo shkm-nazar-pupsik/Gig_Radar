@@ -12,6 +12,11 @@
   --shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
 }
 
+/* Статусні бейджі */
+:root {
+  --warn: #ffcf4d;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -353,6 +358,24 @@ button {
   background: rgba(255, 59, 59, 0.16);
   color: #ffb6b6;
   font-weight: 700;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.status-pill.active {
+  background: rgba(140, 214, 122, 0.16);
+  color: #8cd67a;
+}
+
+.status-pill.planned {
+  background: rgba(255, 207, 77, 0.12);
+  color: #ffcf4d;
 }
 
 .event-detail {

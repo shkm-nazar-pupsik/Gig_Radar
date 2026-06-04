@@ -10,30 +10,27 @@ const initialEvents = [
     id: 'e1',
     date: '2026-05-24',
     time: '19:00',
-    bandName: 'Rock Wave',
-    place: 'Docker Pub',
-    price: 220,
+    bandName: 'METALOBRUCHT',
+    place: 'Wagabundo',
     status: 'Опубліковано',
   },
   {
     id: 'e2',
     date: '2026-05-25',
     time: '20:00',
-    bandName: 'Дим над містом',
-    place: 'Асортиментна Кімната',
-    price: 180,
+    bandName: 'final',
+    place: 'Бар Блуд',
     status: 'Опубліковано',
   },
   {
     id: 'e3',
     date: '2026-06-02',
     time: '18:30',
-    bandName: 'Underground Live',
+    bandName: 'Zypni',
     place: 'Urban Space 100',
-    price: 0,
     status: 'Чергується',
   },
-];
+];  
 
 export default function App() {
   const [events] = useState(initialEvents);

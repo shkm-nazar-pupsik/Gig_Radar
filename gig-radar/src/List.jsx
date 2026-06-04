@@ -31,8 +31,9 @@ export default function List({ events }) {
 
         <select className="filter-select">
           <option value="all">Усі локації</option>
-          <option value="docker">Docker Pub</option>
-          <option value="asort">Асортиментна Кімната</option>
+          <option value="Prom">Промприлад</option>
+          <option value="Wagabundo">Вагабундо</option>
+          <option value="Blood">Бар Блуд</option>
           <option value="urban">Urban Space 100</option>
         </select>
 
@@ -43,7 +44,7 @@ export default function List({ events }) {
 
       {events.length === 0 ? (
         <div className="no-events">
-          <p>Поки що немає запланованих виступів. Стань першим гуртом! 🎸</p>
+          <p>Поки що немає запланованих виступів. Стань першим гуртом!</p>
         </div>
       ) : (
         <div className="events-table-wrap">
@@ -53,16 +54,26 @@ export default function List({ events }) {
                 <th>Час</th>
                 <th>Гурт</th>
                 <th>Місце</th>
+                <th>Статус</th>
               </tr>
             </thead>
             <tbody>
-              {events.map((event) => (
-                <tr key={event.id}>
-                  <td>{event.time}</td>
-                  <td>{event.bandName}</td>
-                  <td>{event.place}</td>
-                </tr>
-              ))}
+              {events.map((event) => {
+                const status = event.status || '';
+                const isActive = status === 'Опубліковано' || status === 'Активний' || status.toLowerCase().includes('опуб');
+                return (
+                  <tr key={event.id}>
+                    <td>{event.time}</td>
+                    <td>{event.bandName}</td>
+                    <td>{event.place}</td>
+                    <td>
+                      <span className={"status-pill " + (isActive ? 'active' : 'planned')}>
+                        {isActive ? 'Активний' : 'Запланований'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
