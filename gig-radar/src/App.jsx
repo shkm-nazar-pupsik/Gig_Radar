@@ -251,15 +251,17 @@ export default function App() {
             onNavigate={setPage}
           />
         ) : (
-          <div className="page-layout">
-            <AccountSwitcher activeRole={currentAccount} onSwitch={handleSwitchAccount} />
+          <div className={`page-layout ${page === 'map' ? 'page-layout-full' : ''}`}>
+            {page !== 'map' && (
+              <AccountSwitcher activeRole={currentAccount} onSwitch={handleSwitchAccount} />
+            )}
             <div className="page-main">
               {page === 'home' && <Home />}
 
               {page === 'map' && (
-                <section className="list-map-profile">
-                  <List events={events} />
+                <section className="list-map-profile map-layout">
                   <Map />
+                  <List events={events} />
                 </section>
               )}
 

@@ -268,6 +268,10 @@ main {
   width: 100%;
 }
 
+.page-layout.page-layout-full {
+  grid-template-columns: 1fr;
+}
+
 .page-main {
   display: flex;
   flex-direction: column;
@@ -795,6 +799,12 @@ main {
   grid-template-columns: 1fr;
   gap: 24px;
   padding: 0;
+}
+
+.list-map-profile.map-layout {
+  width: 100%;
+  grid-template-columns: 2.2fr 1fr;
+  align-items: start;
 }
 
 @media (max-width: 1100px) {
@@ -1491,4 +1501,40 @@ main {
   color: white;
 
   cursor: pointer;
+}
+.main-content {
+  display: flex !important;
+  flex-direction: row !important; /* Ставимо блоки в один рядок */
+  justify-content: space-between !important; /* Карта зліва, список справа */
+  align-items: flex-start !important;        /* Щоб не розтягувалися по висоті */
+  gap: 32px !important;            /* Гарна відстань між блоками */
+  max-width: 1280px !important;    /* Загальна ширина сайту по сітці */
+  margin: 40px auto !important;    /* Центруємо по центру екрана */
+  padding: 0 24px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Блок з картою (ЛІВОРУЧ) */
+.map-placeholder {
+  flex: 0 0 45% !important;        /* Залізно виділяємо 45% ширини екрана */
+  width: 45% !important;
+  margin: 0 !important;            /* Прибираємо старі відступи */
+}
+
+/* Блок з розкладом (ПРАВОРУЧ) */
+.schedule-container {
+  flex: 0 0 52% !important;        /* Залізно виділяємо 52% ширини */
+  width: 52% !important;
+  margin: 0 !important;            /* Прибираємо старі відступи */
+}
+
+/* ==========================================================================
+   ФІКСИ ДЛЯ ТВОЇХ СТИЛІВ, ЩОБ ВОНИ СТАЛИ КОМПАКТНИМИ
+   ========================================================================== */
+
+/* Твоя коробка з градієнтом тепер буде адаптивною */
+.map-box {
+  width: 100% !important;          /* Тепер вона займає всі 45%, які їй виділили */
+  box-sizing: border-box !important;
 }
