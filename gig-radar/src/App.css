@@ -178,7 +178,12 @@ main {
 }
 
 .nav-menu {
-  margin-bottom: 14px;
+  margin-bottom: 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .register-type-row {
@@ -672,8 +677,9 @@ main {
 .filters-panel {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 14px;
+  gap: 15px;
   margin-bottom: 22px;
+  padding: 10px;
 }
 
 .filter-select,
@@ -1304,7 +1310,8 @@ main {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 8px 10px;
+  white-space: nowrap;
 }
 
 .nav-menu .nav-link:hover,
