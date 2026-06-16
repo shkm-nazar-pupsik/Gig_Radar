@@ -1,10 +1,23 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 
 const monthFormatter = new Intl.DateTimeFormat('uk-UA', { month: 'short' });
 const weekDayFormatter = new Intl.DateTimeFormat('uk-UA', { weekday: 'long' });
 
 export default function List({ events }) {
-  const selectedDate = new Date('2026-05-24');
+  const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
+  
+  const handlePrevDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() - 1);
+    setSelectedDate(newDate);
+  };
+
+  const handleNextDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() + 1);
+    setSelectedDate(newDate);
+  };
+
   const formattedDate = `${selectedDate.getDate()} ${monthFormatter.format(selectedDate)}, ${weekDayFormatter.format(selectedDate)}`;
 
   return (
@@ -15,9 +28,9 @@ export default function List({ events }) {
           <p className="schedule-subtitle">Всі концертні події Івано-Франківська на одній панелі.</p>
         </div>
         <div className="schedule-datebox">
-          <button className="date-nav" type="button">‹</button>
+          <button className="date-nav" type="button" onClick={handlePrevDay}>‹</button>
           <div className="date-current">{formattedDate}</div>
-          <button className="date-nav" type="button">›</button>
+          <button className="date-nav" type="button" onClick={handleNextDay}>›</button>
         </div>
       </div>
 

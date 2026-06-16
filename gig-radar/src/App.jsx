@@ -18,30 +18,38 @@ const adminAccounts = [
 
 const initialEvents = [
   {
-    id: 'e1',
-    date: '2026-05-24',
+    id: '1',
     time: '19:00',
-    bandName: 'METALOBRUCHT',
+    bandName: 'Металобрухт',
     place: 'Wagabundo',
-    status: 'Опубліковано',
+    status: 'Активний',
+    coordinates: [48.9229, 24.7101] // Вагабундо
   },
   {
-    id: 'e2',
-    date: '2026-05-25',
+    id: '2',
     time: '20:00',
     bandName: 'final',
     place: 'Бар Блуд',
-    status: 'Опубліковано',
+    status: 'Запланований',
+    coordinates: [48.9192, 24.7099] // Блуд
   },
   {
-    id: 'e3',
-    date: '2026-06-02',
+    id: '3',
     time: '18:30',
     bandName: 'Zypni',
     place: 'Urban Space 100',
-    status: 'Чергується',
+    status: 'Запланований',
+    coordinates: [48.9205, 24.7103] // Urban Space
   },
-];  
+  {
+    id: '4',
+    time: '18:00',
+    bandName: 'Smashed',
+    place: 'Бар Блуд',
+    status: 'Активний',
+    coordinates: [48.9192, 24.7099] // Блуд
+  }
+]; 
 
 export default function App() {
   const [page, setPage] = useState('home');
