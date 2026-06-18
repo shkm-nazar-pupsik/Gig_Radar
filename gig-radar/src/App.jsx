@@ -1,92 +1,56 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import './App.css';
 import Header from './header';
 import Home from './Home.jsx';
 import AuthPage from './AuthPage.jsx';
-import AccountSwitcher from './AccountSwitcher.jsx';
 import AdminProfile from './AdminProfile.jsx';
+import LatestEvents from './LatestEvents'; 
 import List from './List';
 import Map from './Map';
 import Profile from './Profile.jsx';
 import UserProfile from './UserProfile.jsx';
 import Footer from './footer';
+import { 
+  loadBands, 
+  loadUsers, 
+  saveBands, 
+  saveUsers,
+  loadEvents,
+  saveEvents,
+} from './utils/storageManager';
+import { checkpointToEvent } from './utils/checkpointUtils';
 
 const adminAccounts = [
   { id: 'admin-1', name: 'Admin', email: 'admin@iflive.local', password: 'admin123' },
   { id: 'admin-2', name: 'Friend', email: 'friend@iflive.local', password: 'friend123' },
 ];
 
-const initialEvents = [
-  {
-    id: 'e1',
-    date: '2026-05-24',
-    time: '19:00',
-    bandName: 'METALOBRUCHT',
-    place: 'Wagabundo',
-    status: 'Опубліковано',
-  },
-  {
-    id: 'e2',
-    date: '2026-05-25',
-    time: '20:00',
-    bandName: 'final',
-    place: 'Бар Блуд',
-    status: 'Опубліковано',
-  },
-  {
-    id: 'e3',
-    date: '2026-06-02',
-    time: '18:30',
-    bandName: 'Zypni',
-    place: 'Urban Space 100',
-    status: 'Чергується',
-  },
-];  
-
 export default function App() {
   const [page, setPage] = useState('home');
   const [currentUser, setCurrentUser] = useState(null);
+  const [bandAccounts, setBandAccounts] = useState([]);
+  const [userAccounts, setUserAccounts] = useState([]);
+  
+  // Стейт подій тепер оголошений угорі, як вимагає React
+  const [events, setEvents] = useState([]);
 
-  const [bandAccounts, setBandAccounts] = useState([
-    {
-      id: 'band-1',
-      role: 'band',
-      name: 'Silent Road',
-      email: 'silent@road.band',
-      password: 'band123',
-      approved: true,
-      genres: 'Рок • Альтернатива • Івано-Франківськ',
-      description: 'Ми — Silent Road, альтернативний рок-гурт з Івано-Франківська.',
-      logo: '/img/for-band.png',
-      recentEvents: ['Нова пісня опублікована', 'Заплановано концерт'],
-    },
-    {
-      id: 'band-2',
-      role: 'band',
-      name: 'Дми над містом',
-      email: 'dmi@city.band',
-      password: 'city123',
-      approved: false,
-      genres: 'Інді • Акустика',
-      description: 'Атмосферний гурт, який створює музику для вечірніх зустрічей.',
-      logo: '/img/for-band.png',
-      recentEvents: ['Запит на модерацію', 'Оновлено профіль'],
-    },
-  ]);
+  useEffect(() => {
+    const loadData = async () => {
+      const bands = await loadBands();
+      const users = await loadUsers();
+      const eventsData = await loadEvents();
+      setBandAccounts(bands);
+      setUserAccounts(users);
+      setEvents(eventsData);
+    };
+    loadData();
+  }, []);
 
-  const [userAccounts, setUserAccounts] = useState([
-    {
-      id: 'user-1',
-      role: 'user',
-      name: 'Оля Слухач',
-      email: 'olya@music.ua',
-      password: 'user123',
-      favoriteGenres: 'Рок, Альтернатива',
-      favoriteBands: ['Silent Road', 'Дми над містом'],
-      description: 'Просто слухачка, яка любить живу музику у місті.',
-      recentEvents: ['Додано в обране подію Silent Road', 'Підписанося на розсилку'],
-    },
-  ]);
+  useEffect(() => {
+    if (events.length > 0) {
+      saveEvents(events);
+    }
+  }, [events]);
 
   const isAdmin = currentUser?.role === 'admin';
   const currentAccount = currentUser?.role || 'guest';
@@ -116,11 +80,11 @@ export default function App() {
   );
 
   const addActivity = (text) => {
-    // activity log currently stored for future use
     console.debug(text);
   };
 
-  const handleRegister = ({ name, email, password, confirm, registerType }) => {
+  // ФУНКЦІЯ РЕЄСТРАЦІЇ (ПОВНІСТЮ СТРУКТУРОВАНА НАЗАД)
+  const handleRegister = async ({ name, email, password, confirm, registerType }) => {
     if (!name || !email || !password || !confirm) {
       return 'Заповніть всі поля форми реєстрації.';
     }
@@ -129,10 +93,12 @@ export default function App() {
       return 'Паролі не співпадають.';
     }
 
-    const emailExists =
-      bandAccounts.some((band) => band.email === email) ||
-      userAccounts.some((user) => user.email === email) ||
-      adminAccounts.some((admin) => admin.email === email);
+    const bands = await loadBands();
+    const users = await loadUsers();
+    const emailExists = 
+      bands.some((b) => b.email === email) || 
+      users.some((u) => u.email === email) ||
+      adminAccounts.some((a) => a.email === email);
 
     if (emailExists) {
       return 'Користувач з таким email вже існує.';
@@ -147,11 +113,13 @@ export default function App() {
         password,
         approved: false,
         genres: 'Жанри не вказано',
-        description: 'Профіль нового гурту. Додайте опис після входу.',
+        description: 'Профіль нового गुрту. Додайте опис після входу.',
         logo: '/img/for-band.png',
         recentEvents: ['Новий гурт зареєструвався'],
       };
-      setBandAccounts((prev) => [newBand, ...prev]);
+      const allBands = [...bands, newBand];
+      await saveBands(allBands);
+      setBandAccounts(allBands);
       setCurrentUser(newBand);
       addActivity(`Гурт ${newBand.name} зареєструвався`);
     } else {
@@ -166,7 +134,9 @@ export default function App() {
         description: 'Слухач платформи IF Live.',
         recentEvents: ['Реєстрація користувача'],
       };
-      setUserAccounts((prev) => [newUser, ...prev]);
+      const allUsers = [...users, newUser];
+      await saveUsers(allUsers);
+      setUserAccounts(allUsers);
       setCurrentUser(newUser);
       addActivity(`Користувач ${newUser.name} зареєструвався`);
     }
@@ -175,15 +145,30 @@ export default function App() {
     return null;
   };
 
-  const handleLogin = ({ email, password }) => {
-    for (const group of accountGroups) {
-      const account = group.list.find((item) => item.email === email && item.password === password);
-      if (!account) continue;
+  // ФУНКЦІЯ ЛОГІНУ (ПОВНІСТЮ СТРУКТУРОВАНА НАЗАД)
+  const handleLogin = async ({ email, password }) => {
+    const admin = adminAccounts.find((a) => a.email === email && a.password === password);
+    if (admin) {
+      setCurrentUser(admin);
+      addActivity(`Адмін ${admin.name} увійшов у систему`);
+      setPage('profile');
+      return null;
+    }
 
-      setCurrentUser(account);
-      addActivity(
-        `${group.role === 'admin' ? 'Адмін' : group.role === 'band' ? 'Гурт' : 'Користувач'} ${account.name} увійшов у систему`
-      );
+    const bands = await loadBands();
+    const band = bands.find((b) => b.email === email && b.password === password);
+    if (band) {
+      setCurrentUser(band);
+      addActivity(`Гурт ${band.name} увійшов у систему`);
+      setPage('profile');
+      return null;
+    }
+
+    const users = await loadUsers();
+    const user = users.find((u) => u.email === email && u.password === password);
+    if (user) {
+      setCurrentUser(user);
+      addActivity(`Користувач ${user.name} увійшов у систему`);
       setPage('profile');
       return null;
     }
@@ -196,17 +181,29 @@ export default function App() {
     setPage(role === 'guest' ? 'home' : 'profile');
   };
 
-  const toggleBandApproval = (bandId) => {
-    setBandAccounts((prev) =>
-      prev.map((band) => {
-        if (band.id !== bandId) return band;
-        const updated = { ...band, approved: !band.approved };
-        addActivity(`${updated.name} ${updated.approved ? 'підтверджено' : 'знято з перевірки'}`);
-        return updated;
-      })
-    );
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setPage('home');
   };
 
+  const toggleBandApproval = async (bandId) => {
+    const bands = await loadBands();
+    const bandIndex = bands.findIndex((b) => b.id === bandId);
+    if (bandIndex !== -1) {
+      bands[bandIndex].approved = !bands[bandIndex].approved;
+      await saveBands(bands);
+      setBandAccounts(bands);
+      addActivity(`${bands[bandIndex].name} ${bands[bandIndex].approved ? 'підтверджено' : 'знято з перевірки'}`);
+    }
+  };
+
+  const addCheckpoint = (checkpointData) => {
+    const formattedEvent = checkpointToEvent(checkpointData, currentUser?.name || 'Unknown Band');
+    setEvents((prevEvents) => [formattedEvent, ...prevEvents]);
+    setPage('about');
+  };
+
+  // РЕНДЕР КОНТЕНТУ ПРОФІЛЮ (З ОНОВЛЕНЫМ ПРОПСОМ ONADDEVENT)
   const renderProfileContent = () => {
     if (!currentUser) {
       return (
@@ -220,18 +217,28 @@ export default function App() {
       return (
         <>
           <Profile currentUser={featuredBand} isAdmin={false} />
-          <UserProfile currentUser={currentUser} />
+          <UserProfile currentUser={currentUser} events={events} bands={bandAccounts} />
         </>
       );
     }
 
     if (currentUser.role === 'band') {
-      return <Profile currentUser={currentUser} isAdmin={isAdmin} />;
+      const bandCheckpoints = events
+        .filter((event) => event.bandName === currentUser.name)
+        .map((event) => event);
+
+      return (
+        <Profile
+          currentUser={currentUser}
+          isAdmin={isAdmin}
+          bandEvents={bandCheckpoints}
+          onAddCheckpoint={addCheckpoint}
+        />
+      );
     }
 
     return <AdminProfile bandAccounts={bandAccounts} onToggleApproval={toggleBandApproval} />;
   };
-  const [events] = useState(initialEvents);
 
   return (
     <div className="app-container">
@@ -240,6 +247,7 @@ export default function App() {
         onNavigate={setPage}
         onAuthAction={() => setPage(currentUser ? 'profile' : 'auth')}
         isLoggedIn={Boolean(currentUser)}
+        onLogout={handleLogout}
       />
 
       <main className="main-content">
@@ -252,9 +260,8 @@ export default function App() {
           />
         ) : (
           <div className="page-layout">
-            <AccountSwitcher activeRole={currentAccount} onSwitch={handleSwitchAccount} />
             <div className="page-main">
-              {page === 'home' && <Home />}
+              {page === 'home' && <Home events={events} onNavigate={setPage} />}
 
               {page === 'map' && (
                 <section className="list-map-profile">
@@ -270,20 +277,7 @@ export default function App() {
               )}
 
               {page === 'about' && (
-                <section className="about-page">
-                  <div className="about-content">
-                    <h2>Про GigRadar</h2>
-                    <p>
-                      GigRadar — це простір для гуртів і слухачів, які хочуть знаходити концерти,
-                      ділитися фото та залишати відгуки. Тут гурти можуть публікувати свої події,
-                      а слухачі — зберігати улюблені виступи, обирати майбутні заходи та стежити за активністю.
-                    </p>
-                    <p>
-                      Навігація через хедер дає змогу легко переключатися між головною сторінкою,
-                      картою з подіями, та інформацією про проєкт.
-                    </p>
-                  </div>
-                </section>
+                <LatestEvents checkpoints={events} />
               )}
             </div>
           </div>

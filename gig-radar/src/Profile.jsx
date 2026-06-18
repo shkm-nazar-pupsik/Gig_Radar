@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import './Profile.css';
+import { eventToProfileCheckpoint } from './utils/checkpointUtils';
 
-export default function Profile({ currentUser, isAdmin }) {
+export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCheckpoint }) {
   const [activeTab, setActiveTab] = useState('checkpoints');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -41,44 +42,7 @@ export default function Profile({ currentUser, isAdmin }) {
     }
   }, [displayUser, profileData]);
 
-  const [checkpoints, setCheckpoints] = useState([
-    {
-      id: 1,
-      date: '24 травня',
-      day: 'ПТ',
-      title: 'Rock Wave',
-      location: 'Docker Pub',
-      time: '19:00',
-      status: 'Опубліковано',
-    },
-    {
-      id: 2,
-      date: '25 травня',
-      day: 'СБ',
-      title: 'Дми над містом',
-      location: 'Ассортиментна Кімната',
-      time: '20:00',
-      status: 'Опубліковано',
-    },
-    {
-      id: 3,
-      date: '02 червня',
-      day: 'НД',
-      title: 'Underground Live',
-      location: 'Urban Space 100',
-      time: '18:30',
-      status: 'Чергуєтьса',
-    },
-    {
-      id: 4,
-      date: '15 червня',
-      day: 'ЧТ',
-      title: 'Саунд на даху',
-      location: 'Панац Потоцяцик',
-      time: '19:00',
-      status: 'Запланьовано',
-    },
-  ]);
+  const checkpoints = bandEvents.map(eventToProfileCheckpoint);
 
   const [showCreateCheckpoint, setShowCreateCheckpoint] = useState(false);
   const [newCheckpoint, setNewCheckpoint] = useState({
@@ -165,14 +129,8 @@ export default function Profile({ currentUser, isAdmin }) {
       return;
     }
 
-    const nextId = checkpoints.length ? Math.max(...checkpoints.map((item) => item.id)) + 1 : 1;
-    setCheckpoints((prev) => [
-      {
-        id: nextId,
-        ...newCheckpoint,
-      },
-      ...prev,
-    ]);
+    onAddCheckpoint?.({ ...newCheckpoint });
+
     setNewCheckpoint({
       title: '',
       date: '',
@@ -437,28 +395,34 @@ export default function Profile({ currentUser, isAdmin }) {
                   <a href="#" className="view-all">Переглянути все →</a>
                 </div>
                 <div className="checkpoints-grid">
-                  {checkpoints.map((checkpoint) => (
-                    <div key={checkpoint.id} className="checkpoint-card">
-                      <div className="checkpoint-date">
-                        <span className="date-number">{checkpoint.date.split(' ')[0]}</span>
-                        <span className="date-month">{checkpoint.date.split(' ')[1]}</span>
-                      </div>
-                      <div className="checkpoint-content">
-                        <h3>{checkpoint.title}</h3>
-                        <div className="checkpoint-weekday">{checkpoint.day}</div>
-                        <div className="checkpoint-detail">
-                          <img src="/img/placeholder-filled-point.png" alt="location" className="detail-icon" />
-                          <span>{checkpoint.location}</span>
-                        </div>
-                        <div className="checkpoint-detail">
-                          <img src="/img/time-left.png" alt="time" className="detail-icon" />
-                          <span>{checkpoint.time}</span>
-                        </div>
-                      </div>
-                      <div className="checkpoint-status">{checkpoint.status}</div>
-                      <div className="checkpoint-menu">⋯</div>
+                  {checkpoints.length === 0 ? (
+                    <div className="profile-message">
+                      У вас ще немає чекпойнтів. Створіть перший — він зʼявиться на афіші подій.
                     </div>
-                  ))}
+                  ) : (
+                    checkpoints.map((checkpoint) => (
+                      <div key={checkpoint.id} className="checkpoint-card">
+                        <div className="checkpoint-date">
+                          <span className="date-number">{checkpoint.date.split(' ')[0]}</span>
+                          <span className="date-month">{checkpoint.date.split(' ')[1]}</span>
+                        </div>
+                        <div className="checkpoint-content">
+                          <h3>{checkpoint.title}</h3>
+                          <div className="checkpoint-weekday">{checkpoint.day}</div>
+                          <div className="checkpoint-detail">
+                            <img src="/img/placeholder-filled-point.png" alt="location" className="detail-icon" />
+                            <span>{checkpoint.location}</span>
+                          </div>
+                          <div className="checkpoint-detail">
+                            <img src="/img/time-left.png" alt="time" className="detail-icon" />
+                            <span>{checkpoint.time}</span>
+                          </div>
+                        </div>
+                        <div className="checkpoint-status">{checkpoint.status}</div>
+                        <div className="checkpoint-menu">⋯</div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </>
             )}
