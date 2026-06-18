@@ -30,9 +30,17 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [bandAccounts, setBandAccounts] = useState([]);
   const [userAccounts, setUserAccounts] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
+  const [showMap, setShowMap] = useState(false);
   
   // Стейт подій тепер оголошений угорі, як вимагає React
   const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    if (page !== 'map') {
+      setShowMap(false);
+    }
+  }, [page]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -259,14 +267,33 @@ export default function App() {
             onNavigate={setPage}
           />
         ) : (
-          <div className="page-layout">
+          <div className={`page-layout ${page === 'map' ? 'page-layout-full' : ''}`}>
             <div className="page-main">
               {page === 'home' && <Home events={events} onNavigate={setPage} />}
 
               {page === 'map' && (
-                <section className="list-map-profile">
-                  <List events={events} />
-                  <Map />
+                <section className="list-map-profile map-page">
+                  <List
+                    events={events}
+                    selectedDate={selectedDate}
+                    onDateChange={setSelectedDate}
+                    onOpenMap={() => setShowMap(true)}
+                  />
+                  {showMap && (
+                    <div
+                      className="map-overlay"
+                      onClick={(e) => e.target === e.currentTarget && setShowMap(false)}
+                      role="presentation"
+                    >
+                      <div className="map-overlay-panel">
+                        <Map
+                          events={events}
+                          selectedDate={selectedDate}
+                          onClose={() => setShowMap(false)}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </section>
               )}
 
