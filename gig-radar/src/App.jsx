@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import Header from './header';
 import Home from './Home.jsx';
@@ -23,7 +23,8 @@ const initialEvents = [
     bandName: 'Металобрухт',
     place: 'Wagabundo',
     status: 'Активний',
-    coordinates: [48.9229, 24.7101] // Вагабундо
+    date: '2026-05-24',
+    coordinates: [48.92137534494465, 24.704859786012975] // Вагабундо
   },
   {
     id: '2',
@@ -31,7 +32,8 @@ const initialEvents = [
     bandName: 'final',
     place: 'Бар Блуд',
     status: 'Запланований',
-    coordinates: [48.9192, 24.7099] // Блуд
+    date: '2026-05-24',
+    coordinates: [48.91964807911288, 24.712541933045188] // Блуд
   },
   {
     id: '3',
@@ -39,7 +41,8 @@ const initialEvents = [
     bandName: 'Zypni',
     place: 'Urban Space 100',
     status: 'Запланований',
-    coordinates: [48.9205, 24.7103] // Urban Space
+    date: '2026-05-24',
+    coordinates: [48.92191410442102, 24.713712191483094] // Urban Space
   },
   {
     id: '4',
@@ -47,13 +50,22 @@ const initialEvents = [
     bandName: 'Smashed',
     place: 'Бар Блуд',
     status: 'Активний',
-    coordinates: [48.9192, 24.7099] // Блуд
+    date: '2026-05-25',
+    coordinates: [48.91964807911288, 24.712541933045188] // Блуд
   }
 ]; 
 
 export default function App() {
   const [page, setPage] = useState('home');
   const [currentUser, setCurrentUser] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
+  const [showMap, setShowMap] = useState(false);
+
+  useEffect(() => {
+    if (page !== 'map') {
+      setShowMap(false);
+    }
+  }, [page]);
 
   const [bandAccounts, setBandAccounts] = useState([
     {
@@ -267,9 +279,28 @@ export default function App() {
               {page === 'home' && <Home />}
 
               {page === 'map' && (
-                <section className="list-map-profile map-layout">
-                  <Map />
-                  <List events={events} />
+                <section className="list-map-profile map-page">
+                  <List
+                    events={events}
+                    selectedDate={selectedDate}
+                    onDateChange={setSelectedDate}
+                    onOpenMap={() => setShowMap(true)}
+                  />
+                  {showMap && (
+                    <div
+                      className="map-overlay"
+                      onClick={(e) => e.target === e.currentTarget && setShowMap(false)}
+                      role="presentation"
+                    >
+                      <div className="map-overlay-panel">
+                        <Map
+                          events={events}
+                          selectedDate={selectedDate}
+                          onClose={() => setShowMap(false)}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </section>
               )}
 
