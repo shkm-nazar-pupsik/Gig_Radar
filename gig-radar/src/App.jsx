@@ -49,7 +49,12 @@ export default function App() {
       const eventsData = await loadEvents();
       setBandAccounts(bands);
       setUserAccounts(users);
-      setEvents(eventsData);
+      // Add coordinates to events if they don't have them
+      const eventsWithCoords = eventsData.map(event => ({
+        ...event,
+        coordinates: event.coordinates || [48.9215, 24.7097] // Default to Ivano-Frankivsk center
+      }));
+      setEvents(eventsWithCoords);
     };
     loadData();
   }, []);

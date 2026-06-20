@@ -308,14 +308,15 @@ main {
 }
 
 .page-layout {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   width: 100%;
 }
 
 .page-layout.page-layout-full {
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-main {

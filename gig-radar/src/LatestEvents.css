@@ -205,6 +205,16 @@
   color: #ff2b2b;
 }
 
+.afisha-card__hype.hyped {
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.afisha-card__hype.hyped:hover {
+  color: #666;
+}
+
 .afisha-empty {
   padding: 32px 16px;
   border-radius: 12px;

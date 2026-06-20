@@ -8,12 +8,23 @@ export default function LatestEvents({ checkpoints: externalCheckpoints = [] }) 
   const [statusFilter, setStatusFilter] = useState('all');
   const [bandFilter, setBandFilter] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
+  const [hypedEvents, setHypedEvents] = useState(() => {
+    const saved = localStorage.getItem('hypedEvents');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     setCheckpoints(externalCheckpoints);
   }, [externalCheckpoints]);
 
+  useEffect(() => {
+    localStorage.setItem('hypedEvents', JSON.stringify(hypedEvents));
+  }, [hypedEvents]);
+
   const handleAddHype = (id) => {
+    if (hypedEvents.includes(id)) return;
+    
+    setHypedEvents(prev => [...prev, id]);
     setCheckpoints(prev =>
       prev.map(item => item.id === id ? { ...item, hype: (item.hype || 0) + 1 } : item)
     );
@@ -69,7 +80,8 @@ export default function LatestEvents({ checkpoints: externalCheckpoints = [] }) 
           <button
             type="button"
             onClick={() => handleAddHype(item.id)}
-            className="afisha-card__hype"
+            className={`afisha-card__hype ${hypedEvents.includes(item.id) ? 'hyped' : ''}`}
+            disabled={hypedEvents.includes(item.id)}
           >
             🔥 {item.hype || 0}
           </button>
