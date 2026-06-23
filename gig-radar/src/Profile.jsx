@@ -119,6 +119,10 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
     setProfileData(editForm);
     localStorage.setItem('profileData', JSON.stringify(editForm));
     setIsEditingProfile(false);
+    // Force reload to ensure all changes are reflected
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const handleInputChange = (e) => {
