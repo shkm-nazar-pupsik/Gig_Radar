@@ -308,14 +308,15 @@ main {
 }
 
 .page-layout {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   width: 100%;
 }
 
 .page-layout.page-layout-full {
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-main {
@@ -1615,12 +1616,12 @@ main {
 
   cursor: pointer;
 }
-
+<<<<<<<<< Temporary merge branch 1
 .map-box {
-  width: 100% !important;
+  width: 100% !important;          /* Тепер вона займає всі 45%, які їй виділили */
   box-sizing: border-box !important;
 }
-
+=========
 .hero-slider {
   position: relative;
   overflow: hidden;
@@ -1749,4 +1750,4 @@ main {
 .slider-nav.next {
   right: 16px;
 }
-
+>>>>>>>>> Temporary merge branch 2
