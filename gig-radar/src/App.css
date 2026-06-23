@@ -1867,6 +1867,27 @@ main {
     font-size: 14px;
   }
 
+  /* Slider navigation - prevent overlap on mobile */
+  .slider-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .slider-nav.prev {
+    left: 8px;
+  }
+
+  .slider-nav.next {
+    right: 8px;
+  }
+
+  .slider-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+  }
+
   .afisha-page-head h2 {
     font-size: 20px;
   }
