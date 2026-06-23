@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './Profile.css';
 import { eventToProfileCheckpoint } from './utils/checkpointUtils';
 
-export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCheckpoint }) {
+export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents = [], onAddCheckpoint, isReadOnly = false, onBack }) {
   const [activeTab, setActiveTab] = useState('checkpoints');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -14,33 +14,34 @@ export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCh
 
   const [editForm, setEditForm] = useState(profileData);
 
-  const displayUser = currentUser && !isAdmin ? currentUser : null;
+  const displayUser = !isReadOnly && currentUser && !isAdmin ? currentUser : null;
   const isBand = displayUser?.role === 'band';
   const isSimpleUser = displayUser?.role === 'user';
+  const isViewingBandProfile = isReadOnly && viewingBand;
 
-  const profileSource = displayUser
+  const profileSource = (displayUser || viewingBand)
     ? {
-        name: displayUser.name,
-        genres: displayUser.genres || displayUser.favoriteGenres || profileData.genres,
-        description: displayUser.description || profileData.description,
-        logo: displayUser.logo || profileData.logo,
+        name: (displayUser || viewingBand).name,
+        genres: (displayUser || viewingBand).genres || (displayUser || viewingBand).favoriteGenres || profileData.genres,
+        description: (displayUser || viewingBand).description || profileData.description,
+        logo: (displayUser || viewingBand).logo || profileData.logo,
       }
     : profileData;
-  const approvedStatus = displayUser?.approved ?? true;
+  const approvedStatus = (displayUser || viewingBand)?.approved ?? true;
 
   useEffect(() => {
-    if (displayUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    const source = displayUser || viewingBand;
+    if (source) {
       setEditForm({
-        name: displayUser.name,
-        genres: displayUser.genres || displayUser.favoriteGenres || profileData.genres,
-        description: displayUser.description || profileData.description,
-        logo: displayUser.logo || profileData.logo,
+        name: source.name,
+        genres: source.genres || source.favoriteGenres || profileData.genres,
+        description: source.description || profileData.description,
+        logo: source.logo || profileData.logo,
       });
     } else {
       setEditForm(profileData);
     }
-  }, [displayUser, profileData]);
+  }, [displayUser, viewingBand, profileData]);
 
   const checkpoints = bandEvents.map(eventToProfileCheckpoint);
 
@@ -191,7 +192,14 @@ export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCh
           </div>
           
           {/* Buttons */}
-          {isBand && (
+          {isReadOnly && onBack && (
+            <div className="header-buttons">
+              <button className="edit-profile-trigger" onClick={onBack}>
+                ← Назад
+              </button>
+            </div>
+          )}
+          {isBand && !isReadOnly && (
             <div className="header-buttons">
               <button className="create-checkpoint-btn" onClick={() => setShowCreateCheckpoint(true)}>
                 Створити чекпойнт
@@ -391,7 +399,7 @@ export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCh
             ) : (
               <>
                 <div className="section-header">
-                  <h2>Мої чекпойнти</h2>
+                  <h2>{isViewingBandProfile ? 'Чекпойнти гурту' : 'Мої чекпойнти'}</h2>
                   <a href="#" className="view-all">Переглянути все →</a>
                 </div>
                 <div className="checkpoints-grid">
@@ -439,7 +447,7 @@ export default function Profile({ currentUser, isAdmin, bandEvents = [], onAddCh
             ) : (
               <>
                 <div className="section-header">
-                  <h2>Медіа</h2>
+                  <h2>{isViewingBandProfile ? 'Медіа гурту' : 'Медіа'}</h2>
                   <a href="#" className="view-all">Переглянути все →</a>
                 </div>
                 <div className="media-grid">

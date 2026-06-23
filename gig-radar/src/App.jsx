@@ -42,9 +42,12 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [bandAccounts, setBandAccounts] = useState([]);
   const [userAccounts, setUserAccounts] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date()); 
+  const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
   const [showMap, setShowMap] = useState(false);
+  const [viewingBandId, setViewingBandId] = useState(null);
+  
+  // Стейт подій тепер оголошений угорі, як вимагає React
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     if (page !== 'map') {
@@ -148,6 +151,7 @@ export default function App() {
     const admin = adminAccounts.find((a) => a.email === email && a.password === password);
     if (admin) {
       setCurrentUser(admin);
+      setViewingBandId(null);
       addActivity(`Адмін ${admin.name} увійшов у систему`);
       setPage('profile');
       return null;
@@ -157,6 +161,7 @@ export default function App() {
     const band = bands.find((b) => b.email === email && b.password === password);
     if (band) {
       setCurrentUser(band);
+      setViewingBandId(null);
       addActivity(`Гурт ${band.name} увійшов у систему`);
       setPage('profile');
       return null;
@@ -167,13 +172,14 @@ export default function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setViewingBandId(null);
     setPage('home');
   };
 
   const handleBandClick = (bandName) => {
     const band = bandAccounts.find(b => b.name === bandName);
     if (band) {
-      setCurrentUser(band);
+      setViewingBandId(band.id);
       setPage('profile');
     }
   };
@@ -206,6 +212,29 @@ export default function App() {
   };
 
   const renderProfileContent = () => {
+    const viewingBand = viewingBandId ? bandAccounts.find(b => b.id === viewingBandId) : null;
+    const isViewingOwnProfile = currentUser && viewingBandId === currentUser.id;
+
+    // Якщо переглядаємо профіль іншого гурту (режим лише перегляду)
+    if (viewingBand && !isViewingOwnProfile) {
+      const bandCheckpoints = events
+        .filter((event) => event.bandName === viewingBand.name)
+        .map((event) => event);
+
+      return (
+        <Profile
+          viewingBand={viewingBand}
+          isAdmin={isAdmin}
+          bandEvents={bandCheckpoints}
+          isReadOnly={true}
+          onBack={() => {
+            setViewingBandId(null);
+            setPage('home');
+          }}
+        />
+      );
+    }
+
     if (!currentUser) {
       return (
         <div className="auth-notice">
@@ -251,7 +280,7 @@ export default function App() {
         ) : (
           <div className={`page-layout ${page === 'map' ? 'page-layout-full' : ''}`}>
             <div className="page-main">
-              {page === 'home' && <Home events={events} onNavigate={setPage} />}
+              {page === 'home' && <Home events={events} onNavigate={setPage} onBandClick={handleBandClick} />}
 
               {page === 'map' && (
                 <section className="list-map-profile map-page">

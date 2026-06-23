@@ -56,7 +56,6 @@ export const defaultEvents = [
     description: 'Великий сольний концерт із презентацією нових важких синглів.',
     progress: 90,
     hype: 142,
-    createdAt: 1,
   },
   {
     id: 'e2',
@@ -73,7 +72,6 @@ export const defaultEvents = [
     description: 'Камерний виступ для поціновувачів та друзів гурту.',
     progress: 100,
     hype: 89,
-    createdAt: 2,
   },
   {
     id: 'e3',
@@ -90,7 +88,6 @@ export const defaultEvents = [
     description: 'Етап підготовки треків до релізу.',
     progress: 45,
     hype: 64,
-    createdAt: 3,
   },
   {
     id: 'e4',
@@ -107,7 +104,6 @@ export const defaultEvents = [
     description: 'Літній фестивальний виступ на відкритому майданчику.',
     progress: 20,
     hype: 215,
-    createdAt: 4,
   },
   {
     id: 'e5',
@@ -124,7 +120,6 @@ export const defaultEvents = [
     description: 'Ніжний та атмосферний лайв у галерейному просторі.',
     progress: 15,
     hype: 110,
-    createdAt: 5,
   },
   {
     id: 'e6',
@@ -141,7 +136,6 @@ export const defaultEvents = [
     description: 'Головна подія літа для шанувальників прогресивної сцени.',
     progress: 30,
     hype: 320,
-    createdAt: 6,
   },
 ];
 

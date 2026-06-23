@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const defaultPopularEvents = [
   { id: 'event-1', title: 'Rock Wave', band: 'Бенчка Кафе', time: '20:00', date: '24', month: 'лип' },
@@ -6,7 +6,7 @@ const defaultPopularEvents = [
   { id: 'event-3', title: 'Silent Road', band: 'Urban Stage 100', time: '18:30', date: '26', month: 'лип' },
 ]
 
-function Home({ events = [], onNavigate }) {
+function Home({ events = [], onNavigate, onBandClick }) {
   const [openGuide, setOpenGuide] = useState({ bands: false, listeners: false })
   const [currentSlide, setCurrentSlide] = useState(0)
 
@@ -40,10 +40,15 @@ function Home({ events = [], onNavigate }) {
         month: eventDate
           ? eventDate.toLocaleDateString('uk-UA', { month: 'short' })
           : event.month || '',
+        hype: event.hype || 0,
       };
     });
 
-  const popularEvents = events.length > 0 ? formatEventsForHome(events).slice(0, 3) : defaultPopularEvents;
+  const popularEvents = events.length > 0
+    ? formatEventsForHome(events)
+        .sort((a, b) => (b.hype || 0) - (a.hype || 0))
+        .slice(0, 3)
+    : defaultPopularEvents;
 
   const toggleGuide = (section) => {
     setOpenGuide((prev) => ({
@@ -52,9 +57,15 @@ function Home({ events = [], onNavigate }) {
     }))
   }
 
-  const nextSlide = () => setCurrentSlide((s) => (s + 1) % slides.length)
-  const prevSlide = () => setCurrentSlide((s) => (s - 1 + slides.length) % slides.length)
-  const goToSlide = (i) => setCurrentSlide(i)
+  const nextSlide = useCallback(() => setCurrentSlide((s) => (s + 1) % slides.length), []);
+  const prevSlide = useCallback(() => setCurrentSlide((s) => (s - 1 + slides.length) % slides.length), []);
+  const goToSlide = useCallback((i) => setCurrentSlide(i), []);
+  const slideKey = currentSlide;
+
+  useEffect(() => {
+    const timer = setInterval(nextSlide, 7000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
 
   return (
     <main>
@@ -71,13 +82,13 @@ function Home({ events = [], onNavigate }) {
       "linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)), url('/img/profile-bg.jpg')",
   }}
 >
-  <div className="hero-content">
-    <h1>{slides[currentSlide].title}</h1>
+  <div className="hero-content" key={slideKey}>
+    <h1 key={`title-${slideKey}`}>{slides[currentSlide].title}</h1>
 
-    <p>{slides[currentSlide].description}</p>
+    <p key={`desc-${slideKey}`}>{slides[currentSlide].description}</p>
 
     <div className="hero-buttons">
-      <button className="primary-btn" onClick={() => onNavigate('about')}>
+      <button key={`btn-${slideKey}`} className="primary-btn" onClick={() => onNavigate('about')}>
         Переглянути події
       </button>
     </div>
@@ -115,7 +126,7 @@ function Home({ events = [], onNavigate }) {
               </div>
               <div className="event-info">
                 <h3>{ev.title}</h3>
-                <p>{ev.band}</p>
+                <p className="event-band" onClick={() => onBandClick && onBandClick(ev.band)}>{ev.band}</p>
                 <span>{ev.time}</span>
               </div>
             </div>

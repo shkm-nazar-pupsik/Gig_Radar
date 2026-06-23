@@ -61,9 +61,9 @@ main {
   justify-content: flex-start;
   align-items: center;
 
-  padding: 60px 120px;
-  min-height: 360px;
-  gap: 30px;
+  padding: 4rem 8rem;
+  min-height: 22.5rem;
+  gap: 2rem;
 
   background-image: linear-gradient(90deg, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.55) 45%, rgba(5,5,5,0.2) 100%), url("/img/town-hall.png");
   background-size: cover;
@@ -71,37 +71,53 @@ main {
 }
 
 .hero-content{
-  max-width: 280px;
+  max-width: 17.5rem;
+  animation: fadeSlideIn 0.6s ease-out both;
 }
 
 .hero h1{
-  font-size: 36px;
+  font-size: 2.25rem;
   line-height: 1.1;
-  margin-bottom: 15px;
-}
-
-.hero h1 span{
-  color: #ff2b2b;
+  margin-bottom: 0.9375rem;
+  animation: fadeSlideIn 0.6s ease-out both;
 }
 
 .hero p{
   color: #cfcfcf;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.7;
 
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+  animation: fadeSlideIn 0.6s ease-out 0.1s both;
 }
 
 .hero-buttons{
   display: flex;
-  gap: 10px;
+  gap: 0.625rem;
+  animation: fadeSlideIn 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-buttons{
+  display: flex;
+  gap: 0.625rem;
 }
 
 .primary-btn,
 .secondary-btn{
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -109,7 +125,7 @@ main {
 .auth-section {
   display: flex;
   justify-content: center;
-  padding: 40px 120px;
+  padding: 2.5rem 7.5rem;
 }
 
 .auth-box,
@@ -160,6 +176,19 @@ main {
   position: sticky;
   top: 0;
   z-index: 20;
+  flex-wrap: nowrap;
+  min-width: 0;
+  position: relative;
+}
+
+.main-header .nav-menu {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.main-header .auth-btn {
+  display: flex;
 }
 
 .modal-overlay {
@@ -213,6 +242,11 @@ main {
   margin: 0;
   font-size: 1.65rem;
   letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.logo {
+  flex-shrink: 0;
 }
 
 .logo h2 span {
@@ -230,6 +264,41 @@ main {
   align-items: center;
   justify-content: center;
   flex: 1;
+}
+
+.burger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 100;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.burger-menu span {
+  width: 30px;
+  height: 3px;
+  background: white;
+  border-radius: 3px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.burger-menu span:nth-child(1) {
+  transform-origin: 0% 0%;
+}
+
+.burger-menu span:nth-child(3) {
+  transform-origin: 0% 100%;
 }
 
 .register-type-row {
@@ -800,7 +869,7 @@ main {
 
   gap: 20px;
 
-  padding: 0 120px 120px;
+  padding: 0 10% 10%;
 }
 
 .guide-card{
@@ -912,7 +981,7 @@ main {
 /* EVENTS */
 
 .events{
-  padding: 0 120px 120px;
+  padding: 0 10% 10%;
 }
 
 .section-top{
@@ -936,6 +1005,7 @@ main {
   display: grid;
   grid-template-columns: repeat(3,1fr);
   gap: 15px;
+  justify-items: center;
 }
 
 .event-card{
@@ -946,6 +1016,8 @@ main {
   overflow: hidden;
 
   border: 1px solid #1d1d1d;
+  width: 70%;
+  text-align: center;
 }
 
 .event-meta{
@@ -991,6 +1063,17 @@ main {
   color: #cfcfcf;
   margin-bottom: 6px;
   font-size: 12px;
+}
+
+.event-card .event-band{
+  color: #ff2b2b;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.event-card .event-band:hover{
+  color: #ff4a4a;
+  text-decoration: underline;
 }
 
 
@@ -1757,3 +1840,532 @@ main {
   box-sizing: border-box !important;
 }
 
+/* Responsive Styles */
+
+/* Small mobile (max-width: 500px) */
+@media (max-width: 500px) {
+  .main-header {
+    flex-wrap: nowrap;
+    padding: 12px 50px 12px 16px;
+  }
+  .hero {
+    padding: 30px 16px;
+    min-height: 250px;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero p {
+    font-size: 11px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .afisha-page-head h2 {
+    font-size: 20px;
+  }
+
+  .afisha-page-head p {
+    font-size: 13px;
+  }
+
+  .event-time-block {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .status-pill {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .page-layout {
+    padding: 16px 12px;
+  }
+
+  .main-header {
+    padding: 12px 12px;
+  }
+
+  .nav-menu {
+    top: 50px;
+  }
+
+  /* Header - burger menu for small mobile */
+
+  .burger-menu {
+    display: flex !important;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: #09090c;
+    padding: 20px;
+    gap: 16px;
+    transform: translateY(-150%);
+    transition: transform 0.3s ease;
+    z-index: 99;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-menu--open {
+    transform: translateY(0);
+  }
+
+  .nav-menu .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .auth-btn {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .auth-btn button {
+    width: 100%;
+  }
+
+  /* Event Cards */
+  .afisha-card {
+    flex-direction: column;
+  }
+
+  .afisha-card__date {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .afisha-card__main {
+    width: 100%;
+  }
+
+  .afisha-card__side {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  /* Schedule */
+  .schedule-topbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .schedule-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .schedule-datebox {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .event-card-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .event-details {
+    width: 100%;
+  }
+
+  /* Hide view toggle buttons on mobile */
+  .afisha-controls__view {
+    display: none;
+  }
+
+  /* Home page guide sections */
+  .guide {
+    flex-direction: column;
+    display: flex;
+    gap: 16px;
+  }
+
+  .guide-card {
+    width: 100%;
+  }
+
+  .guide-content {
+    display: block;
+  }
+
+  .guide-card:not(.open) .guide-content {
+    display: none;
+  }
+
+  /* Popular events cards */
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    
+  }
+
+  .event-card {
+    text-align: center;
+  }
+
+  .event-info {
+    text-align: center;
+  }
+
+  .event-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .event-info p {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .section-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-top a {
+    font-size: 14px;
+  }
+}
+
+/* Mobile (501px - 768px) */
+@media (min-width: 501px) and (max-width: 768px) {
+  .main-header {
+    gap: 12px;
+    padding: 12px 50px 12px 16px;
+  }
+
+  .hero {
+    padding: 40px 20px;
+    min-height: 300px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .main-header .nav-menu.nav-menu--open {
+  transform: translateY(0) !important;
+}
+
+  .hero-buttons button {
+    width: 100%;
+  }
+
+  .page-layout {
+    padding: 20px 16px;
+  }
+
+  .page-main {
+    gap: 16px;
+  }
+
+  /* Header */
+  header {
+    padding: 12px 16px;
+  }
+
+  .burger-menu {
+    display: flex !important;
+  }
+
+  /* Базовий стан мобільного меню (сховане) */
+  .main-header .nav-menu {
+    display: flex !important; /* Дозволяємо відображення структури флексу */
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: #09090c;
+    padding: 20px;
+    gap: 16px;
+    
+    /* Ховаємо меню за верхній край екрану */
+    transform: translateY(-200%) !important; 
+    transition: transform 0.3s ease-in-out !important;
+    
+    z-index: 9999 !important; /* Піднімаємо максимально вгору, щоб нічого не перекривало */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Стан коли меню ВІДКРИТЕ (React додає клас nav-menu--open) */
+  .main-header .nav-menu.nav-menu--open {
+    transform: translateY(0) !important; /* Виїжджає на екран */
+  }
+
+  .main-header .auth-btn {
+    display: flex !important; 
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .nav-menu .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .auth-btn button {
+    width: 100%;
+  }
+  /* Event Cards */
+  .afisha-card {
+    flex-direction: column;
+  }
+
+  .afisha-card__date {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .afisha-card__main {
+    width: 100%;
+  }
+
+  .afisha-card__side {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  /* Schedule */
+  .schedule-topbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .schedule-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .schedule-datebox {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .event-card-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .event-details {
+    width: 100%;
+  }
+
+  /* Map */
+  .map-overlay-panel {
+    width: 95%;
+    max-height: 80vh;
+  }
+
+  .slider-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .slider-nav.prev {
+    left: 8px;
+  }
+
+  .slider-nav.next {
+    right: 8px;
+  }
+
+  /* Auth */
+  .auth-box {
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  .auth-tabs {
+    width: 100%;
+  }
+
+  .auth-tabs button {
+    flex: 1;
+  }
+
+  /* Profile */
+  .list-map-profile {
+    flex-direction: column;
+  }
+
+  /* Filters */
+  .filters-panel {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  /* Hide view toggle buttons on mobile */
+  .afisha-controls__view {
+    display: none;
+  }
+
+  /* Home page guide sections */
+  .guide {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .guide-card {
+    width: 100%;
+  }
+
+  .guide-content {
+    display: block;
+  }
+
+  .guide-card:not(.open) .guide-content {
+    display: none;
+  }
+
+  /* Popular events cards centering */
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .event-card {
+    text-align: center;
+  }
+
+  .event-info {
+    text-align: center;
+  }
+
+  .event-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .event-info p {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .section-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-top a {
+    font-size: 14px;
+  }
+}
+
+/* Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .page-layout {
+    padding: 24px 20px;
+  }
+
+  .hero {
+    padding: 50px 40px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .schedule-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .schedule-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .afisha-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .afisha-controls__search,
+  .afisha-controls__select {
+    width: 100%;
+  }
+
+  /* Grid layouts */
+  .events-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+/* Small mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .hero {
+    padding: 30px 16px;
+    min-height: 250px;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero p {
+    font-size: 11px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .afisha-page-head h2 {
+    font-size: 20px;
+  }
+
+  .afisha-page-head p {
+    font-size: 13px;
+  }
+
+  .event-time-block {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .status-pill {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}

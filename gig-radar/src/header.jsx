@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 export default function Header({ currentPage, onNavigate, onAuthAction, isLoggedIn, onLogout }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
@@ -16,51 +17,71 @@ export default function Header({ currentPage, onNavigate, onAuthAction, isLogged
     setShowLogoutModal(false);
   };
 
+  const toggleMobileMenu = () => {
+    setShowMobileMenu(!showMobileMenu);
+  };
+
+  const handleNavClick = (page) => {
+    onNavigate(page);
+    setShowMobileMenu(false);
+  };
+
   return (
     <header className="main-header">
       <div className="logo">
         <h2>GigRadar</h2>
       </div>
-      <nav className="nav-menu">
+
+      <nav className={`nav-menu ${showMobileMenu ? 'nav-menu--open' : ''}`}>
         <button
           type="button"
           className={currentPage === 'home' ? 'nav-link active' : 'nav-link'}
-          onClick={() => onNavigate('home')}
+          onClick={() => handleNavClick('home')}
         >
           Головна
         </button>
         <button
           type="button"
           className={currentPage === 'about' ? 'nav-link active' : 'nav-link'}
-          onClick={() => onNavigate('about')}
+          onClick={() => handleNavClick('about')}
         >
           Останні події
         </button>
         <button
           type="button"
           className={currentPage === 'map' ? 'nav-link active' : 'nav-link'}
-          onClick={() => onNavigate('map')}
+          onClick={() => handleNavClick('map')}
         >
           Карта та розклад
         </button>
+        
+        <div className="auth-btn">
+          {isLoggedIn ? (
+            <>
+              <button type="button" onClick={() => { onAuthAction(); setShowMobileMenu(false); }}>
+                Мій профіль
+              </button>
+              <button type="button" onClick={handleLogoutClick}>
+                Вийти
+              </button>
+            </>
+          ) : (
+            <button type="button" onClick={() => { onAuthAction(); setShowMobileMenu(false); }}>
+              Увійти
+            </button>
+          )}
+        </div>
       </nav>
 
-      <div className="auth-btn">
-        {isLoggedIn ? (
-          <>
-            <button type="button" onClick={onAuthAction}>
-              Мій профіль
-            </button>
-            <button type="button" onClick={handleLogoutClick}>
-              Вийти
-            </button>
-          </>
-        ) : (
-          <button type="button" onClick={onAuthAction}>
-            Увійти
-          </button>
-        )}
-      </div>
+      <button
+        className="burger-menu"
+        onClick={toggleMobileMenu}
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
       {showLogoutModal && (
         <div className="modal-overlay">
