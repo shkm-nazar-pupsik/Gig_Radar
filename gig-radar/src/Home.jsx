@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+  import { useState, useEffect, useCallback } from 'react'
 
 const defaultPopularEvents = [
   { id: 'event-1', title: 'Rock Wave', band: 'Бенчка Кафе', time: '20:00', date: '24', month: 'лип' },
@@ -73,15 +73,13 @@ function Home({ events = [], onNavigate, onBandClick }) {
       {/* HERO SLIDER */}
       <section className="hero-slider">
         <div className="slider">
-          <button className="slider-nav prev" onClick={prevSlide} aria-label="Prev">‹</button>
-
           <div
-  className="hero"
-  style={{
-    backgroundImage:
-      "linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)), url('/img/profile-bg.jpg')",
-  }}
->
+    className="hero"
+    style={{
+      backgroundImage:
+        "linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.65)), url('/img/profile-bg.jpg')",
+    }}
+  >
   <div className="hero-content" key={slideKey}>
     <h1 key={`title-${slideKey}`}>{slides[currentSlide].title}</h1>
 
@@ -94,19 +92,21 @@ function Home({ events = [], onNavigate, onBandClick }) {
     </div>
   </div>
 </div>
-
-          <button className="slider-nav next" onClick={nextSlide} aria-label="Next">›</button>
         </div>
 
-        <div className="slider-dots">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              className={`dot ${i === currentSlide ? 'active' : ''}`}
-              onClick={() => goToSlide(i)}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
+        <div className="slider-controls">
+          <button className="slider-nav prev" onClick={prevSlide} aria-label="Prev">‹</button>
+          <div className="slider-dots">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                className={`dot ${i === currentSlide ? 'active' : ''}`}
+                onClick={() => goToSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button className="slider-nav next" onClick={nextSlide} aria-label="Next">›</button>
         </div>
       </section>
 
