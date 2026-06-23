@@ -14,17 +14,17 @@ export default function AuthPage({ currentUser, onLogin, onRegister, onNavigate 
     }));
   };
 
-  const handleAuthSubmit = (e) => {
+  const handleAuthSubmit = async (e) => {
     e.preventDefault();
     setAuthError('');
 
     if (authMode === 'login') {
-      const error = onLogin({ email: authForm.email, password: authForm.password });
+      const error = await onLogin({ email: authForm.email, password: authForm.password });
       if (error) {
         setAuthError(error);
       }
     } else {
-      const error = onRegister({
+      const error = await onRegister({
         name: authForm.name,
         email: authForm.email,
         password: authForm.password,
@@ -159,12 +159,6 @@ export default function AuthPage({ currentUser, onLogin, onRegister, onNavigate 
             {authMode === 'login' ? 'Увійти' : 'Зареєструватися'}
           </button>
         </form>
-
-        <div className="auth-note">
-          <p>Адміни можуть увійти як:</p>
-          <p><strong>admin@iflive.local / admin123</strong></p>
-          <p><strong>friend@iflive.local / friend123</strong></p>
-        </div>
       </div>
     </section>
   );

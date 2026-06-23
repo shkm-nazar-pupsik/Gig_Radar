@@ -46,7 +46,7 @@ export default function Map({ events = [], selectedDate, onClose }) {
       <div className="map-topbar">
         <div>
           <h2>Карта</h2>
-          <p>События на {selectedDate ? selectedDate.toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' }) : 'цей день'}</p>
+          <p>Події на сьогодні {selectedDate ? selectedDate.toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' }) : 'цей день'}</p>
         </div>
         <div className="map-controls">
           <p className="map-event-count">

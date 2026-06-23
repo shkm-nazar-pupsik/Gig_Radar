@@ -1,0 +1,242 @@
+.latest-events-page {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.4s ease;
+  text-align: left;
+}
+
+.afisha-page-head {
+  margin-bottom: 22px;
+}
+
+.afisha-page-head h2 {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.afisha-page-head p {
+  margin: 0;
+  color: #a8a2b4;
+  font-size: 14px;
+}
+
+.afisha-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.afisha-controls__search {
+  flex: 1 1 180px;
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.afisha-controls__search:focus {
+  border-color: rgba(255, 43, 43, 0.5);
+}
+
+.afisha-controls__select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.afisha-controls__view {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.afisha-controls__view button {
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: transparent;
+  color: #a8a2b4;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.afisha-controls__view button.is-active {
+  color: #fff;
+  border-color: rgba(255, 43, 43, 0.45);
+  background: rgba(255, 43, 43, 0.12);
+}
+
+.afisha-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.afisha-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.afisha-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.afisha-card:hover {
+  border-color: rgba(255, 43, 43, 0.25);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.afisha-card__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(255, 43, 43, 0.12);
+}
+
+.afisha-card__date span {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.afisha-card__date small {
+  margin-top: 2px;
+  color: #ff6b6b;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.afisha-card__main {
+  min-width: 0;
+}
+
+.afisha-card__band {
+  margin: 0 0 4px;
+  color: #ff2b2b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.afisha-card__title {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.afisha-card__meta {
+  margin: 0;
+  color: #a8a2b4;
+  font-size: 12px;
+}
+
+.afisha-card__desc {
+  margin: 8px 0 0;
+  color: #8f899c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.afisha-card__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.afisha-card__status {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a8a2b4;
+}
+
+.afisha-card__status--active { color: #ffcf4d; }
+.afisha-card__status--planned { color: #8cd67a; }
+.afisha-card__status--completed { color: #00e673; }
+
+.afisha-card__hype {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #cfcfcf;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.afisha-card__hype:hover {
+  color: #ff2b2b;
+}
+
+.afisha-empty {
+  padding: 32px 16px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.afisha-empty p {
+  margin: 0;
+  color: #a8a2b4;
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .latest-events-page {
+    padding: 14px;
+  }
+
+  .afisha-controls__view {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .afisha-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .afisha-card__side {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}
