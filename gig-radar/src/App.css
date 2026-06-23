@@ -1616,12 +1616,13 @@ main {
 
   cursor: pointer;
 }
-<<<<<<<<< Temporary merge branch 1
+
+
 .map-box {
-  width: 100% !important;          /* Тепер вона займає всі 45%, які їй виділили */
+  width: 100% !important;
   box-sizing: border-box !important;
 }
-=========
+
 .hero-slider {
   position: relative;
   overflow: hidden;
@@ -1750,4 +1751,9 @@ main {
 .slider-nav.next {
   right: 16px;
 }
->>>>>>>>> Temporary merge branch 2
+
+.map-box {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+

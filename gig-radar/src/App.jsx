@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import React, { useMemo, useState, useEffect } from 'react';
 import './App.css';
 import Header from './header';
 import Home from './Home.jsx';
 import AuthPage from './AuthPage.jsx';
-import AccountSwitcher from './AccountSwitcher.jsx';
 import AdminProfile from './AdminProfile.jsx';
 import LatestEvents from './LatestEvents';
-import List from './List';
+import List, { checkpointToEvent } from './List'; // Імпортуємо правильну функцію з розширеною валідацією
 import Map from './Map';
 import Profile from './Profile.jsx';
 import Footer from './footer';
@@ -16,13 +14,9 @@ import {
   loadUsers,
   saveBands,
   saveUsers,
-import { 
-  loadBands, 
-  saveBands, 
   loadEvents,
   saveEvents,
 } from './utils/storageManager';
-import { checkpointToEvent } from './utils/checkpointUtils';
 
 const adminAccounts = [
   { id: 'admin-1', name: 'Admin', email: 'admin@iflive.local', password: 'admin123' },
@@ -31,17 +25,17 @@ const adminAccounts = [
 
 const PLACE_COORDS = {
   Wagabundo: [48.92137534494465, 24.704859786012975],
+  'Скейт парк':[48.911411735977524, 24.68493472023798],
   'Бар Блуд': [48.91964807911288, 24.712541933045188],
   'Urban Space 100': [48.92191410442102, 24.713712191483094],
-  'Urban Stage 100': [48.92191410442102, 24.713712191483094],
+  'Промприлад': [48.91401470889012, 24.712087661986857],
 };
 
 const enrichEventsWithCoordinates = (items) =>
-  items.map((event) => ({
+  (items || []).map((event) => ({
     ...event,
-    coordinates: event.coordinates || PLACE_COORDS[event.place] || PLACE_COORDS[event.location],
+    coordinates: event.coordinates || PLACE_COORDS[event.place] || PLACE_COORDS[event.location] || [48.9215, 24.7097],
   }));
-];
 
 export default function App() {
   const [page, setPage] = useState('home');
@@ -49,12 +43,8 @@ export default function App() {
   const [bandAccounts, setBandAccounts] = useState([]);
   const [userAccounts, setUserAccounts] = useState([]);
   const [events, setEvents] = useState([]);
-  const [bandAccounts, setBandAccounts] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
   const [showMap, setShowMap] = useState(false);
-  
-  // Стейт подій тепер оголошений угорі, як вимагає React
-  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     if (page !== 'map') {
@@ -65,16 +55,12 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       const bands = await loadBands();
+      const users = await loadUsers();
       const eventsData = await loadEvents();
+      
       setBandAccounts(bands);
       setUserAccounts(users);
       setEvents(enrichEventsWithCoordinates(eventsData));
-      // Add coordinates to events if they don't have them
-      const eventsWithCoords = eventsData.map(event => ({
-        ...event,
-        coordinates: event.coordinates || [48.9215, 24.7097] // Default to Ivano-Frankivsk center
-      }));
-      setEvents(eventsWithCoords);
     };
     loadData();
   }, []);
@@ -86,24 +72,6 @@ export default function App() {
   }, [events]);
 
   const isAdmin = currentUser?.role === 'admin';
-  const currentAccount = currentUser?.role || 'guest';
-
-  const accountGroups = useMemo(
-    () => [
-      { role: 'admin', list: adminAccounts },
-      { role: 'band', list: bandAccounts },
-    ],
-    [bandAccounts]
-  );
-
-  const accountMap = useMemo(
-    () => ({
-      guest: null,
-      band: bandAccounts[0] || null,
-      admin: adminAccounts[0] || null,
-    }),
-    [bandAccounts]
-  );
 
   const featuredBand = useMemo(
     () => bandAccounts.find((band) => band.approved) || bandAccounts[0] || null,
@@ -125,11 +93,10 @@ export default function App() {
 
     const bands = await loadBands();
     const users = await loadUsers();
+    
     const emailExists =
       bands.some((b) => b.email === email) ||
       users.some((u) => u.email === email) ||
-    const emailExists = 
-      bands.some((b) => b.email === email) ||
       adminAccounts.some((a) => a.email === email);
 
     if (emailExists) {
@@ -172,23 +139,6 @@ export default function App() {
       setCurrentUser(newUser);
       addActivity(`Користувач ${newUser.name} зареєструвався`);
     }
-    const newBand = {
-      id: `band-${Date.now()}`,
-      role: 'band',
-      name,
-      email,
-      password,
-      approved: false,
-      genres: 'Жанри не вказано',
-      description: 'Профіль нового गुрту. Додайте опис після входу.',
-      logo: '/img/for-band.png',
-      recentEvents: ['Новий гурт зареєструвався'],
-    };
-    const allBands = [...bands, newBand];
-    await saveBands(allBands);
-    setBandAccounts(allBands);
-    setCurrentUser(newBand);
-    addActivity(`Гурт ${newBand.name} зареєструвався`);
 
     setPage('profile');
     return null;
@@ -213,11 +163,6 @@ export default function App() {
     }
 
     return 'Невірний email або пароль.';
-  };
-
-  const handleSwitchAccount = (role) => {
-    setCurrentUser(accountMap[role] || null);
-    setPage(role === 'guest' ? 'home' : 'profile');
   };
 
   const handleLogout = () => {
@@ -246,8 +191,18 @@ export default function App() {
 
   const addCheckpoint = (checkpointData) => {
     const formattedEvent = checkpointToEvent(checkpointData, currentUser?.name || 'Unknown Band');
-    setEvents((prevEvents) => [formattedEvent, ...prevEvents]);
-    setPage('about');
+    
+    if (!formattedEvent.date) {
+      formattedEvent.date = new Date().toISOString().split('T')[0];
+    }
+    
+    const [enrichedEvent] = enrichEventsWithCoordinates([formattedEvent]);
+    setEvents((prevEvents) => [enrichedEvent, ...prevEvents]);
+    
+    const newDateObj = new Date(enrichedEvent.date);
+    setSelectedDate(isNaN(newDateObj.getTime()) ? new Date() : newDateObj);
+    
+    setPage('map'); 
   };
 
   const renderProfileContent = () => {
@@ -260,9 +215,7 @@ export default function App() {
     }
 
     if (currentUser.role === 'band') {
-      const bandCheckpoints = events
-        .filter((event) => event.bandName === currentUser.name)
-        .map((event) => event);
+      const bandCheckpoints = events.filter((event) => event.bandName === currentUser.name);
 
       return (
         <Profile
@@ -297,9 +250,6 @@ export default function App() {
           />
         ) : (
           <div className={`page-layout ${page === 'map' ? 'page-layout-full' : ''}`}>
-            {page !== 'map' && (
-              <AccountSwitcher activeRole={currentAccount} onSwitch={handleSwitchAccount} />
-            )}
             <div className="page-main">
               {page === 'home' && <Home events={events} onNavigate={setPage} />}
 

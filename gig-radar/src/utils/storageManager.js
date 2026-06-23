@@ -256,4 +256,11 @@ export const clearAllData = () => {
   localStorage.removeItem('users');
   localStorage.removeItem('events');
 };
+export const loadUsers = async () => {
+  const users = localStorage.getItem('users');
+  return users ? JSON.parse(users) : [];
+};
 
+export const saveUsers = async (users) => {
+  localStorage.setItem('users', JSON.stringify(users));
+};
