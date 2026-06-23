@@ -70,10 +70,6 @@ export default function List({ events, selectedDate, onDateChange, onOpenMap, on
           <option value="Blood">Бар Блуд</option>
           <option value="urban">Urban Space 100</option>
         </select>
-
-        <label className="today-toggle">
-          <input type="checkbox" /> Лише сьогодні
-        </label>
       </div>
 
       <div className="schedule-meta">
