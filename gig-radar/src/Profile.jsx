@@ -5,11 +5,14 @@ import { eventToProfileCheckpoint } from './utils/checkpointUtils';
 export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents = [], onAddCheckpoint, isReadOnly = false, onBack }) {
   const [activeTab, setActiveTab] = useState('checkpoints');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: 'Silent Road',
-    genres: 'Рок • Альтернатива • Івано-Франківськ',
-    description: 'Ми — Silent Road, альтернативний рок-гурт з Івано-Франківська. Створюємо музику, яка говорить про важливе.',
-    logo: '/img/for-band.png',
+  const [profileData, setProfileData] = useState(() => {
+    const saved = localStorage.getItem('profileData');
+    return saved ? JSON.parse(saved) : {
+      name: 'Silent Road',
+      genres: 'Рок • Альтернатива • Івано-Франківськ',
+      description: 'Ми — Silent Road, альтернативний рок-гурт з Івано-Франківська. Створюємо музику, яка говорить про важливе.',
+      logo: '/img/for-band.png',
+    };
   });
 
   const [editForm, setEditForm] = useState(profileData);
@@ -44,6 +47,10 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
       setEditForm(profileData);
     }
   }, [displayUser, viewingBand, profileData]);
+
+  useEffect(() => {
+    setLogoPreview(profileData.logo);
+  }, [profileData.logo]);
 
   const checkpoints = bandEvents.map(eventToProfileCheckpoint);
 
@@ -107,6 +114,7 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
   const handleEditProfile = (e) => {
     e.preventDefault();
     setProfileData(editForm);
+    localStorage.setItem('profileData', JSON.stringify(editForm));
     setIsEditingProfile(false);
   };
 
