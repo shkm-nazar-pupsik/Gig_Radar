@@ -282,6 +282,58 @@
   font-size: 14px;
   font-family: inherit;
   transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+.form-group .file-input {
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 13px;
+}
+
+.form-group .file-input:hover {
+  border-color: #cc0000;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.form-group .file-input::file-selector-button {
+  padding: 8px 16px;
+  background: rgba(204, 0, 0, 0.2);
+  border: 1px solid #cc0000;
+  border-radius: 4px;
+  color: #cc0000;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 12px;
+  transition: all 0.3s ease;
+}
+
+.form-group .file-input::file-selector-button:hover {
+  background: rgba(204, 0, 0, 0.3);
+}
+
+.logo-preview {
+  margin-top: 12px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #cc0000;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .form-group input:focus,

@@ -13,6 +13,8 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
   });
 
   const [editForm, setEditForm] = useState(profileData);
+  const [logoPreview, setLogoPreview] = useState(profileData.logo);
+  const [logoFile, setLogoFile] = useState(null);
 
   const displayUser = !isReadOnly && currentUser && !isAdmin ? currentUser : null;
   const isBand = displayUser?.role === 'band';
@@ -114,6 +116,22 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result);
+        setEditForm((prev) => ({
+          ...prev,
+          logo: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleNewCheckpointChange = (e) => {
@@ -349,7 +367,24 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
                 name="logo"
                 value={editForm.logo}
                 onChange={handleInputChange}
+                placeholder="https://example.com/logo.png"
               />
+            </div>
+            <div className="form-group">
+              <label htmlFor="logo-upload">Або завантажте фото</label>
+              <input
+                type="file"
+                id="logo-upload"
+                name="logo-upload"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="file-input"
+              />
+              {logoPreview && (
+                <div className="logo-preview">
+                  <img src={logoPreview} alt="Попередній перегляд" />
+                </div>
+              )}
             </div>
             <div className="form-buttons">
               <button type="submit" className="save-btn">Зберегти</button>
