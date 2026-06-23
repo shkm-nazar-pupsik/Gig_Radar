@@ -39,6 +39,8 @@
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 .profile-logo {
@@ -681,15 +683,16 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .profile-header-content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .header-top {
-    flex-direction: column;
-    align-items: center;
-  }
+.profile-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 20px 0;
+  width: 100%;
+}
 
   .profile-logo {
     width: 120px;
