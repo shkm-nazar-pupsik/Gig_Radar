@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './LatestEvents.css';
 import { getStatusKey, getStatusLabel } from './utils/checkpointUtils';
 
-export default function LatestEvents({ checkpoints: externalCheckpoints = [] }) {
+export default function LatestEvents({ checkpoints: externalCheckpoints = [], onBandClick }) {
   const [checkpoints, setCheckpoints] = useState(externalCheckpoints);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -65,7 +65,13 @@ export default function LatestEvents({ checkpoints: externalCheckpoints = [] }) 
         </div>
 
         <div className="afisha-card__main">
-          <p className="afisha-card__band">{item.bandName || 'Невідомий гурт'}</p>
+          <p 
+            className="afisha-card__band"
+            onClick={() => onBandClick && onBandClick(item.bandName)}
+            style={{ cursor: onBandClick ? 'pointer' : 'default' }}
+          >
+            {item.bandName || 'Невідомий гурт'}
+          </p>
           <h3 className="afisha-card__title">{item.title}</h3>
           <p className="afisha-card__meta">{meta}</p>
           {item.description && variant === 'feed' && (

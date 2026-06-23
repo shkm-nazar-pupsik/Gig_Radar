@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 export default function AuthPage({ currentUser, onLogin, onRegister, onNavigate }) {
   const [authMode, setAuthMode] = useState('login');
-  const [registerType, setRegisterType] = useState('band');
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', confirm: '' });
   const [authError, setAuthError] = useState('');
 
@@ -29,7 +28,7 @@ export default function AuthPage({ currentUser, onLogin, onRegister, onNavigate 
         email: authForm.email,
         password: authForm.password,
         confirm: authForm.confirm,
-        registerType,
+        registerType: 'band',
       });
       if (error) {
         setAuthError(error);
@@ -83,38 +82,13 @@ export default function AuthPage({ currentUser, onLogin, onRegister, onNavigate 
           {authMode === 'register' && (
             <>
               <div className="form-group">
-                <label>Реєстрація як</label>
-                <div className="register-type-row">
-                  <label>
-                    <input
-                      type="radio"
-                      name="registerType"
-                      value="band"
-                      checked={registerType === 'band'}
-                      onChange={() => setRegisterType('band')}
-                    />
-                    Гурт
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="registerType"
-                      value="user"
-                      checked={registerType === 'user'}
-                      onChange={() => setRegisterType('user')}
-                    />
-                    Користувач
-                  </label>
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="name">{registerType === 'band' ? 'Назва гурту' : 'Ім’я користувача'}</label>
+                <label htmlFor="name">Назва гурту</label>
                 <input
                   id="name"
                   name="name"
                   value={authForm.name}
                   onChange={handleAuthChange}
-                  placeholder={registerType === 'band' ? 'Silent Road' : 'Оля Слухач'}
+                  placeholder="Silent Road"
                 />
               </div>
             </>

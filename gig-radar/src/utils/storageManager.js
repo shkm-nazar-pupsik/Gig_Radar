@@ -40,31 +40,6 @@ const defaultBands = [
   },
 ];
 
-const defaultUsers = [
-  {
-    id: 'user-1',
-    role: 'user',
-    name: 'Оля Слухач',
-    email: 'olya@music.ua',
-    password: 'user123',
-    favoriteGenres: 'Рок, Альтернатива',
-    favoriteBands: ['Silent Road', 'Дми над містом'],
-    description: 'Просто слухачка, яка любить живу музику у місті.',
-    recentEvents: ['Додано в обране подію Silent Road', 'Підписанося на розсилку'],
-  },
-  {
-    id: 'user-2',
-    role: 'user',
-    name: 'Маша Меломанка',
-    email: 'masha@music.ua',
-    password: 'user456',
-    favoriteGenres: 'Інді, Панк, Психедельний рок',
-    favoriteBands: ['Zypni'],
-    description: 'Люблю нестандартну музику та експерименти.',
-    recentEvents: ['Підписалась на Zypni', 'Додала фото з концерту'],
-  },
-];
-
 export const defaultEvents = [
   {
     id: 'e1',
@@ -194,32 +169,6 @@ export const loadBands = async () => {
   }
 };
 
-// Завантажити слухачів з Supabase
-export const loadUsers = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*');
-    
-    if (error) throw error;
-    
-    if (data && data.length > 0) {
-      // Convert snake_case to camelCase for frontend
-      return data.map(user => ({
-        ...user,
-        favoriteGenres: user.favorite_genres || '',
-        favoriteBands: user.favorite_bands || [],
-        recentEvents: user.recent_events || [],
-      }));
-    }
-    
-    return defaultUsers;
-  } catch (error) {
-    console.error('Error loading users from Supabase:', error);
-    return defaultUsers;
-  }
-};
-
 // Зберегти гурт в Supabase
 export const saveBands = async (bands) => {
   try {
@@ -243,31 +192,6 @@ export const saveBands = async (bands) => {
     }
   } catch (error) {
     console.error('Error saving bands to Supabase:', error);
-  }
-};
-
-// Зберегти користувача в Supabase
-export const saveUsers = async (users) => {
-  try {
-    for (const user of users) {
-      const { error } = await supabase
-        .from('users')
-        .upsert({
-          id: user.id,
-          role: user.role,
-          name: user.name,
-          email: user.email,
-          password: user.password,
-          favorite_genres: user.favoriteGenres || '',
-          favorite_bands: user.favoriteBands || [],
-          description: user.description,
-          recent_events: user.recentEvents || [],
-        });
-      
-      if (error) throw error;
-    }
-  } catch (error) {
-    console.error('Error saving users to Supabase:', error);
   }
 };
 

@@ -8,13 +8,10 @@ import LatestEvents from './LatestEvents';
 import List from './List';
 import Map from './Map';
 import Profile from './Profile.jsx';
-import UserProfile from './UserProfile.jsx';
 import Footer from './footer';
 import { 
   loadBands, 
-  loadUsers, 
   saveBands, 
-  saveUsers,
   loadEvents,
   saveEvents,
 } from './utils/storageManager';
@@ -29,7 +26,6 @@ export default function App() {
   const [page, setPage] = useState('home');
   const [currentUser, setCurrentUser] = useState(null);
   const [bandAccounts, setBandAccounts] = useState([]);
-  const [userAccounts, setUserAccounts] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
   const [showMap, setShowMap] = useState(false);
   
@@ -45,10 +41,8 @@ export default function App() {
   useEffect(() => {
     const loadData = async () => {
       const bands = await loadBands();
-      const users = await loadUsers();
       const eventsData = await loadEvents();
       setBandAccounts(bands);
-      setUserAccounts(users);
       // Add coordinates to events if they don't have them
       const eventsWithCoords = eventsData.map(event => ({
         ...event,
@@ -72,19 +66,17 @@ export default function App() {
     () => [
       { role: 'admin', list: adminAccounts },
       { role: 'band', list: bandAccounts },
-      { role: 'user', list: userAccounts },
     ],
-    [bandAccounts, userAccounts]
+    [bandAccounts]
   );
 
   const accountMap = useMemo(
     () => ({
       guest: null,
-      user: userAccounts[0] || null,
       band: bandAccounts[0] || null,
       admin: adminAccounts[0] || null,
     }),
-    [bandAccounts, userAccounts]
+    [bandAccounts]
   );
 
   const featuredBand = useMemo(
@@ -107,52 +99,31 @@ export default function App() {
     }
 
     const bands = await loadBands();
-    const users = await loadUsers();
     const emailExists = 
-      bands.some((b) => b.email === email) || 
-      users.some((u) => u.email === email) ||
+      bands.some((b) => b.email === email) ||
       adminAccounts.some((a) => a.email === email);
 
     if (emailExists) {
       return 'Користувач з таким email вже існує.';
     }
 
-    if (registerType === 'band') {
-      const newBand = {
-        id: `band-${Date.now()}`,
-        role: 'band',
-        name,
-        email,
-        password,
-        approved: false,
-        genres: 'Жанри не вказано',
-        description: 'Профіль нового गुрту. Додайте опис після входу.',
-        logo: '/img/for-band.png',
-        recentEvents: ['Новий гурт зареєструвався'],
-      };
-      const allBands = [...bands, newBand];
-      await saveBands(allBands);
-      setBandAccounts(allBands);
-      setCurrentUser(newBand);
-      addActivity(`Гурт ${newBand.name} зареєструвався`);
-    } else {
-      const newUser = {
-        id: `user-${Date.now()}`,
-        role: 'user',
-        name,
-        email,
-        password,
-        favoriteGenres: 'Рок, Альтернатива',
-        favoriteBands: ['Silent Road', 'Дми над містом'],
-        description: 'Слухач платформи IF Live.',
-        recentEvents: ['Реєстрація користувача'],
-      };
-      const allUsers = [...users, newUser];
-      await saveUsers(allUsers);
-      setUserAccounts(allUsers);
-      setCurrentUser(newUser);
-      addActivity(`Користувач ${newUser.name} зареєструвався`);
-    }
+    const newBand = {
+      id: `band-${Date.now()}`,
+      role: 'band',
+      name,
+      email,
+      password,
+      approved: false,
+      genres: 'Жанри не вказано',
+      description: 'Профіль нового गुрту. Додайте опис після входу.',
+      logo: '/img/for-band.png',
+      recentEvents: ['Новий гурт зареєструвався'],
+    };
+    const allBands = [...bands, newBand];
+    await saveBands(allBands);
+    setBandAccounts(allBands);
+    setCurrentUser(newBand);
+    addActivity(`Гурт ${newBand.name} зареєструвався`);
 
     setPage('profile');
     return null;
@@ -177,15 +148,6 @@ export default function App() {
       return null;
     }
 
-    const users = await loadUsers();
-    const user = users.find((u) => u.email === email && u.password === password);
-    if (user) {
-      setCurrentUser(user);
-      addActivity(`Користувач ${user.name} увійшов у систему`);
-      setPage('profile');
-      return null;
-    }
-
     return 'Невірний email або пароль.';
   };
 
@@ -197,6 +159,14 @@ export default function App() {
   const handleLogout = () => {
     setCurrentUser(null);
     setPage('home');
+  };
+
+  const handleBandClick = (bandName) => {
+    const band = bandAccounts.find(b => b.name === bandName);
+    if (band) {
+      setCurrentUser(band);
+      setPage('profile');
+    }
   };
 
   const toggleBandApproval = async (bandId) => {
@@ -223,15 +193,6 @@ export default function App() {
         <div className="auth-notice">
           <p>Щоб побачити свій профіль, спочатку увійдіть або зареєструйтесь через кнопку у хедері.</p>
         </div>
-      );
-    }
-
-    if (currentUser.role === 'user') {
-      return (
-        <>
-          <Profile currentUser={featuredBand} isAdmin={false} />
-          <UserProfile currentUser={currentUser} events={events} bands={bandAccounts} />
-        </>
       );
     }
 
@@ -283,6 +244,7 @@ export default function App() {
                     selectedDate={selectedDate}
                     onDateChange={setSelectedDate}
                     onOpenMap={() => setShowMap(true)}
+                    onBandClick={handleBandClick}
                   />
                   {showMap && (
                     <div
@@ -309,7 +271,7 @@ export default function App() {
               )}
 
               {page === 'about' && (
-                <LatestEvents checkpoints={events} />
+                <LatestEvents checkpoints={events} onBandClick={handleBandClick} />
               )}
             </div>
           </div>

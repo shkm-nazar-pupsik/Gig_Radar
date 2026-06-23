@@ -3,7 +3,7 @@
 const monthFormatter = new Intl.DateTimeFormat('uk-UA', { month: 'short' });
 const weekDayFormatter = new Intl.DateTimeFormat('uk-UA', { weekday: 'long' });
 
-export default function List({ events, selectedDate, onDateChange, onOpenMap }) {
+export default function List({ events, selectedDate, onDateChange, onOpenMap, onBandClick }) {
   const handlePrevDay = () => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -91,7 +91,13 @@ export default function List({ events, selectedDate, onDateChange, onOpenMap }) 
                   <span className="event-time-label">початок</span>
                 </div>
                 <div className="event-details">
-                  <h3 className="event-band">{event.bandName}</h3>
+                  <h3 
+                    className="event-band"
+                    onClick={() => onBandClick && onBandClick(event.bandName)}
+                    style={{ cursor: onBandClick ? 'pointer' : 'default' }}
+                  >
+                    {event.bandName}
+                  </h3>
                   <p className="event-place">
                     <span className="event-place-icon" aria-hidden="true">📍</span>
                     {event.place}
