@@ -32,6 +32,9 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
         logo: (displayUser || viewingBand).logo || profileData.logo,
       }
     : profileData;
+
+  // Use profileData directly for the header image to ensure updates are reflected
+  const displayLogo = isBand && !isReadOnly ? profileData.logo : profileSource.logo;
   const approvedStatus = (displayUser || viewingBand)?.approved ?? true;
 
   useEffect(() => {
@@ -191,7 +194,7 @@ export default function Profile({ currentUser, viewingBand, isAdmin, bandEvents 
           {/* Logo and Info */}
           <div className="header-main">
             <div className="profile-logo">
-              <img src={profileSource.logo} alt="Logo" />
+              <img src={displayLogo} alt="Logo" />
             </div>
             <div className="profile-info">
               <div className="profile-title">
