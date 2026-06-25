@@ -45,8 +45,6 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(new Date('2026-05-24'));
   const [showMap, setShowMap] = useState(false);
   const [viewingBandId, setViewingBandId] = useState(null);
-  
-  // Стейт подій тепер оголошений угорі, як вимагає React
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -116,7 +114,7 @@ export default function App() {
         approved: false,
         genres: 'Жанри не вказано',
         description: 'Профіль нового гурту. Додайте опис після входу.',
-        logo: '/img/for-band.png',
+        logo: './img/for-band.png', // Виправлено шлях для GitHub Pages (додано крапку)
         recentEvents: ['Новий гурт зареєструвався'],
       };
       const allBands = [...bands, newBand];
@@ -215,11 +213,9 @@ export default function App() {
     const viewingBand = viewingBandId ? bandAccounts.find(b => b.id === viewingBandId) : null;
     const isViewingOwnProfile = currentUser && viewingBandId === currentUser.id;
 
-    // Якщо переглядаємо профіль іншого гурту (режим лише перегляду)
     if (viewingBand && !isViewingOwnProfile) {
       const bandCheckpoints = events
-        .filter((event) => event.bandName === viewingBand.name)
-        .map((event) => event);
+        .filter((event) => event.bandName === viewingBand.name);
 
       return (
         <Profile
